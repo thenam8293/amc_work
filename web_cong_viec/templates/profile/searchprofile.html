@@ -1,0 +1,156 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<style type="text/css">
+
+.popover{max-width: 100vw;width:19.4vw;}
+.typeahead{width: 15vw !important;height: auto;}
+.typeahead >li{width: 15vw !important;}
+.typeahead >li>a{text-align: left !important;}
+.form-control{
+   border-radius:0;background-color: #d9d9d9;color: #262626;height: 3.7vh !important;min-width: 1vw !important;}
+.head_content{border-bottom: 1px solid #901e1d !important}
+.li_dien> a#bar_prf {background-color:#901E1D !important; font-weight: bold !important; color: white !important; border-bottom: 3px solid #901E1D !important; }
+td{color:black;font-size: 15px}
+</style></br>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8" style="margin-top:3vh"><div class="col-sm-12"><div class="col-xs-10 col-xs-offset-1">
+        <b style="font-size:150%;" class="title_lg">TÌM KIẾM THÔNG TIN NHÂN VIÊN</b>
+        </div>
+        </div></div>
+    </div></br>
+	<div class="container-fluid">
+<form novalidate="novalidate" class="form-inline" id="form1" method="POST" autocomplete="off">
+        <!-- NOTI -->
+             {% for i in range(list_noti|length) %}
+                <button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+                        <span style="font-size:1.2vh;margin-left:-11vw">{{list_noti[i][2]}}</span>
+                    </button>
+                    
+                    <input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+                    <input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+                    <input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+            {% endfor %}    
+    <div class="row">
+        <div class="col-md-10">
+
+        <div class="col-sm-3">
+        <input class="form-control" type="text" id="hoTen" name="hoten" placeholder="Họ và tên" data-provide="typeahead" data-items="4"></div>
+        
+        <div class="col-sm-2">
+        <input class="form-control" type="text" id="maNV" name="maNV" placeholder="Mã nhân viên" data-provide="typeahead" data-items="4">
+        </div>
+        <script src="/static/scripts/jquery.js"></script>
+        <script src="/static/scripts/bootstrap-typeahead.js"></script>
+
+        <script>  
+        var subjects = [];
+        {% for i in b %}
+            {% for t in i %}
+            subjects.push("{{t}}")
+            {% endfor %}
+        {% endfor %}
+       
+        $('#hoTen').typeahead({source: subjects})  
+
+
+        </script> 
+        <div class="col-sm-3"><select class="form-control" name="donvi" style="padding:0;padding-left:8px">
+ <!--            <option disabled selected value="">Đơn vị</option> -->
+            <option value=""></option>
+            {% for i in list_phong %}
+                {% for j in i %}
+                    <option value="{{j}}" {% if j == session["donvi"] %} selected {% endif %}>{{j}}</option>
+                {% endfor %}
+            {% endfor %}
+        </select>
+        </div>
+        <div class="col-sm-2">
+        <input type="submit" class="btn btn-sm" style="background:#262626;height: 3.7vh;border-radius: 0;border:none;outline:none;color:white" value="Xem" form="form1">
+        </div>
+        </div>
+        
+    </div>
+</form>
+</div>
+</div>
+
+    <div style="margin-left:5vw;margin-top:2vh">
+    {% if u != [] %}
+		<table class="table table-consended" style="width:90vw;position:absolute">
+			<thead style="background-color:#901e1d;">
+				<tr>
+                    <th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">STT</th>
+					<th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Mã NV</th>
+					<th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Họ và Tên</th>
+					<th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Chức danh</th>
+                    <th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Bộ phận</th>
+					<th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Trung tâm</th>
+					<th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Di động</th>
+					<th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Số máy lẻ</th>
+					<th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Mail</th>
+					<th class="sortTable" style="border-bottom: 1px solid #901e1d ;color: white">Ngày sinh</th>
+					<!-- <th class="head_content" style="color: white">Ngày vào làm</th> -->   
+				</tr>
+			</thead>
+			<tbody>
+				{% for i in u %}
+                <tr style="height:60px">
+                    <td style="font-size: 90%;width:3%">{{loop.index}}</td>
+                    <td style="font-size: 90%;width:5%">{{i[2]}}</td>
+                    <td style="font-size: 90%;width:16%">{{i[1]}}</td>
+                    <td style="font-size: 90%;width:16%">{{i[12]}}</td>
+                    <td style="font-size: 90%;width:16%">{{i[11]}}</td>
+                    <td style="font-size: 90%;width:16%">{{i[9]}}</td>
+                    <td style="font-size: 90%;width:7%">{{i[8]}}</td>
+                    <td style="font-size: 90%;width:7%">{{i[7]}}</td>
+                    <td style="font-size: 90%;width:7%">{{i[6]}}</td>
+                    <td style="font-size: 90%;width:7%">{{i[3]}}</td>
+                    <!-- <td style="font-size: 90%;width:11%">{{i[5]}}</td> -->
+                </tr>
+                {% endfor %}
+			</tbody>
+		
+		</table>
+    {% endif %}
+        </br></br></br></br>
+    
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+        $('.sortTable').each(function(col) {
+            $(this).hover(
+            function() { $(this).addClass('focus'); },
+            function() { $(this).removeClass('focus'); }
+            );
+            $(this).click(function() {
+                if ($(this).is('.asc')) {
+                $(this).removeClass('asc');
+                $(this).addClass('desc selected');
+                sortOrder = -1;
+            }
+            else {
+                $(this).addClass('asc selected');
+                $(this).removeClass('desc');
+                sortOrder = 1;
+            }
+            $(this).siblings().removeClass('asc selected');
+            $(this).siblings().removeClass('desc selected');
+            var arrData = $('table').find('tbody >tr:has(td)').get();
+            arrData.sort(function(a, b) {
+                var val1 = $(a).children('td').eq(col).text().toUpperCase().split('%')[0];
+                var val2 = $(b).children('td').eq(col).text().toUpperCase().split('%')[0];
+                if($.isNumeric(val1) && $.isNumeric(val2))
+                return sortOrder == 1 ? val1-val2 : val2-val1;
+                else
+                    return (val1 < val2) ? -sortOrder : (val1 > val2) ? sortOrder : 0;
+            });
+            $.each(arrData, function(index, row) {
+            $('tbody').append(row);
+            });
+          });
+        });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+	{% block content %}
+<style type="text/css">.col-md-6{margin-top:5px;}
+.popover{max-width: 100vw;width:19.4vw;}
+.form-control{
+   border-radius:0;background-color: #d9d9d9 !important;color: #262626;height: 3.7vh !important;min-width: 1vw !important;}
+.li_dien> a#bar_prf {
+        background-color:#901E1D !important;
+        font-weight: bold !important;
+        color: white !important;
+        border-bottom: 3px solid #901E1D !important;
+        }
+label{color: #cccccc}
+</style>
+<script type="text/javascript">
+   <!--
+      // Form validation code will come here.
+  function validate()
+  {
+  
+         if( document.form1.ngaysinh.value == "" )
+         {
+            alert( "Ngày sinh." );
+            document.form1.ngaysinh.focus() ;
+            return false;
+         }
+        
+         if( document.form1.CMND.value == "")
+         {
+            alert( "Số CMND chưa đúng." );
+            document.form1.CMND.focus() ;
+            return false;
+         }
+
+         if( document.form1.diaChi.value == "" )
+         {
+            alert( "Nhà ở đâu." );
+            document.form1.diaChi.focus() ;
+            return false;
+         }
+
+         return( true );
+    }
+         	
+   //-->
+</script>
+</br>
+<div class="container body-content">
+<div class="container" style="margin-top:3vh">
+	<div class="col-md-4"><b style="font-size:150%" class="title_lg">THÔNG TIN CÁ NHÂN</b></div>
+</div></br>
+
+<div class="container-fluid" style="margin-top:10vh">
+  
+<!-- 1 -->
+<form action="" method="post">
+   {% for i in range(list_noti|length) %}
+  <button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+        <span style="font-size:1.2vh;margin-left:-11vw">{{list_noti[i][2]}}</span>
+      </button>
+      
+      <input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+      <input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+      <input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+  {% endfor %} 
+</form> 
+<form novalidate="novalidate" class="form-inline" method="post" id="form1" name="form1" onsubmit="return(validate());">
+
+
+
+<div class="col-md-6">
+<label class="col-sm-4 title_sm" for="inputMobile">Di Động:</label>
+<div class="col-sm-6">
+<input class="form-control" type="text" id="inputMobile" ng-model="patient.Mobile" name="mobile" value="{{profile_user[0][8]}}">
+</div></div>
+
+
+<div class="col-md-6">
+<label class="col-sm-4 title_sm" for="inputPhone">Điện thoại bàn:</label>
+<div class="col-sm-8">
+<input class="form-control" type="text" id="inputPhone" ng-model="patient.Phone" name="phone" value="{{profile_user[0][7]}}">
+</div></div>
+
+
+
+<!-- 4 -->
+
+
+<div class="col-md-6">
+<label class="col-sm-4 title_sm" for="inputBirth">Ngày sinh:</label>
+<div class="col-sm-6">
+<input class="form-control" type="date" id="inputBirth" ng-model="patient.Birth" placeholder="VD:01/01/1990" name="ngaysinh" value="{{profile_user[0][3]}}"></div></div>
+<div class="col-md-6">
+<label class="col-sm-4 title_sm" for="inputCMND">CMND:</label>
+<div class="col-sm-8">
+<input class="form-control" type="text" id="inputCMND" ng-model="patient.CMND" placeholder="10 hoac 12 so" name="CMND" value="{{profile_user[0][4]}}"></div></div>
+
+<div class="col-md-6">
+<label class="col-sm-4 title_sm" for="inputDiachi">Địa chỉ HKTT:</label>
+<div class="col-sm-6">
+<input class="form-control" type="text" id="inputDiachi" ng-model="patient.diaChi" name="diaChi" value="{{profile_user[0][10]}}">
+</div></div>
+
+
+</form>
+
+</div>
+
+
+</div>
+
+
+
+<div style="padding-left:70vw;position:absolute">
+
+<input type="submit" name="submit" class="btn btn-sm btn-danger btn_edit_del_ok" style="background-color:transparent;border:none;font-weight:bold" form="form1" value="Xác nhận">
+
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,63 @@
+		
+    <div id="chon_cong_viec" class="" style="">
+	      <select id="select_cong_viec" name="select_cong_viec" class="form-control popover_height content_sm" style="width:13.5vw;margin-bottom:0.5vh;" onchange="check_time_task();chon_cong_viec();check_percent();">
+	          <option value="" disabled selected hidden>Chọn công việc</option>
+	          <option  value="cong_viec_moi">Công việc mới</option>
+
+	          {% for i in old_task %}
+	          <option value="{{i[0]}}">{{i[1]}}</option>
+	          {% endfor %}
+	      </select>
+	      <button type="button" class="btn btn-default btn_edit_del_ok" style="padding-left:1vw;font-weight:bold;outline:none;margin-top:0.5vh;" onclick="back()">Back</button>
+    </div>
+<!-- CV moi -->
+    <div id="input_cong_viec_moi" class="" name="input_cong_viec_moi" style="display: none;">
+      <input class="form-control popover_height content_sm" type="text" name="Task_name_rp" id="task_name_rp" placeholder="Tên công việc" autocomplete="off">
+      <select name="type_department" id="job_type_rp" class="form-control popover_height content_sm" style="padding-left: 9px; ">
+      		<option value="" disabled selected hidden>Loại công việc</option>
+          {% for r in list_type_department %}
+          	<option value="{{r}}">{{r}}</option>
+          {% endfor %}
+      </select>
+     
+      <textarea class="form-control popover_height content_sm" style="display: inline;" type="text" id="content_12" name="Description_rp" placeholder="Mô tả chi tiết về công việc thực hiện"></textarea>
+        <select name="Percentage" id="percent"  class="form-control popover_height content_sm" style='display: inline;padding-left: 10px;'>
+             <option value="" disabled selected hidden>Ước tính hoàn thành</option>
+             {% for phan_tram in ['100%', '95%', '90%', '85%', '80%', '75%', '70%', '65%', '60%', '55%', '50%', '45%', '40%', '35%', '30%', '25%', '20%', '15%', '10%', '5%', '0%'] %}
+             	<option value="{{phan_tram}}">{{phan_tram}}</option>
+             {% endfor %}
+      </select>	
+    <div id="div_chen_cvmoi" class="content_sm"></div>
+        <br>
+        <button type="button" class="btn btn-default btn_edit_del_ok " style="padding-right:0;padding-top:10px;outline:none;font-weight:bold;"  id="submit_newtask" name="submit" value="new_task">OK</button>
+        <button type="button" class="btn btn-default btn_edit_del_ok " style="padding-top:10px;font-weight:bold;outline:none;" onclick="back()">Back</button>
+    </div>
+    <!-- cv cu -->
+    {% for i in range(old_task|length) %}
+    <div id="input_cong_viec_cu{{old_task[i][0]}}" class="" style="display: none;">
+	      <textarea class="form-control popover_height content_sm" style="max-height: 30vh;display: inline;" type="text" name="Content{{old_task[i][0]}}" id="Content{{old_task[i][0]}}" placeholder="Nội dung báo cáo"></textarea>
+	      <div id="per_{{old_task[i][0]}}"></div>	
+	      <div id="div_chen_cvcu{{old_task[i][0]}}" class="content_sm"></div>
+	      <button type="button" class="btn btn-default btn_edit_del_ok" style="padding-right:10px;padding-top:10px;outline:none;font-weight:bold;" id="submit_oldtask" name="submit" value="old_task">OK</button>
+	      <button type="button" class="btn btn-default btn_edit_del_ok" style="padding-top:10px;font-weight:bold;outline:none;" onclick="back()">Back</button>
+    </div>
+    {% endfor %}
+    <script type="text/javascript">
+    	function check_percent() {
+    		{% for i in range(old_task|length) %}
+    			if(document.getElementById('select_cong_viec').value ==  '{{old_task[i][0]}}'){
+    				{% if old_task[i][2] != None %}
+    					{% set per = old_task[i][2][:-1]|int %}	
+    				{% else %}
+    					{% set per = 100 %}
+    				{% endif %}
+    				document.getElementById('per_{{old_task[i][0]}}').innerHTML = "<select name='Percentage{{old_task[i][0]}}' id='Percentage{{old_task[i][0]}}'  class='form-control popover_height content_sm' style='display: inline;padding-left:10px'>\
+    			             <option value='' disabled selected hidden>Ước tính hoàn thành</option>\
+    			             {% for j in range(100,per-5,-5) %}\
+    			             <option value='{{j}}%'>{{j}}%</option>\
+    			             {% endfor %}\
+    			      </select>";
+    			}
+    		{% endfor %}
+    	}
+    </script>

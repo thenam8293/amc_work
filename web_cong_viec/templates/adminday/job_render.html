@@ -1,0 +1,216 @@
+
+<input type="text" id="block_base" value="{{block_base}}" name="block_base" style="display: none">
+<input type="text" id="content_base" value="{{content_base}}" name="content_base" style="display: none">
+
+{% set min_unit = 15 %}
+{% set work_hour = 14 %}
+
+{% for k in range(block_base|length) %}
+	<div id="div_executer{{k}}" style="font-size:0;margin:0;padding:0">
+	<div id="div_task_{{k}}" style="font-size:0;margin:0 auto;margin-left: 5%;margin-top: 2vh;display:inline-block;width: 90%">
+			  <input type="text" id="task_{{k}}_0" style="width:{{100/(work_hour*12)}}%;display: none" disabled>
+			  {% for i in range(1,(work_hour*12)|int+1) %}
+			  <input type="text" id="task_{{k}}_{{i}}" style="width:{{100/(work_hour*12)}}%;visibility:hidden" disabled>
+			  {% endfor %}
+	  <!-- EDIT_REPORT -->
+	  {% for j in range(block_base[k]|length) %}
+	  <div class="title_B_{{k}}_{{j}} hide" >
+		  	  	<label class="title_sm" style="">Tên tài sản/Khách hàng/Công việc:</label><br>
+		  	  	<label class="content_sm popover_title pop_tt_content" style=""> {{content_base[k][j][2]}}</label><br>
+		  	  	<label class="title_sm popover_title" style="">Nội dung giao việc: </label><br>
+		  		<label class="content_sm popover_title pop_tt_content" style="white-space: pre-wrap">{{(content_base[k][j][5])}}</label><br>
+		  		<label class="title_sm popover_title" style="">Nội dung báo cáo: </label><br>
+		  		<label class="content_sm popover_title pop_tt_content" style="white-space: pre-wrap"> {{content_base[k][j][5]}}</label><br>
+		  		<label class="title_sm popover_title" style="width:49%">Loại công việc: </label>
+		  		<label class="title_sm popover_title" style="width:49%">Tỷ lệ hoàn thành: </label><br>
+		  		<label class="content_sm popover_title pop_tt_content" style="width:49%"> {{content_base[k][j][20]}}</label>
+		  		<label class="content_sm popover_title pop_tt_content" style="width:49%"> {{content_base[k][j][7]}}</label><br>
+	  </div>
+	  <div class="content_B_{{k}}_{{j}} hide">
+			<div id="edit_task_B_{{k}}_{{j}}" name="edit_task_B_{{k}}_{{j}}" style="display:none">
+					<input class="form-control popover_height content_sm" type="text" name="Task_name{{content_base[k][j][1]}}" id="Task_name{{k}}_{{j}}" placeholder="Tên công việc" value="{{content_base[k][j][2]}}" style="display: {% if session.username == content_base[k][j][12] %} none {% endif %}" >
+
+			       	<textarea class="form-control popover_height content_sm" style="width:17vw;min-width: 13.5vw; max-height: 200%;display: inline;" type="text" name="Content{{content_base[k][j][1]}}" id="Content{{k}}_{{j}}" placeholder="Nội dung báo cáo">{{content_base[k][j][5]}}</textarea>
+			       	<select style="padding-left:9px;display: {% if session.username == content_base[k][j][12] %}  none {% endif %}" name="type_department{{content_base[k][j][1]}}" id="type_department{{k}}_{{j}}" class="content_sm form-control popover_height box_task_report">
+			       		<option value="" disabled selected hidden>Loại công việc</option>
+				       	{% for r in list_type_department %}
+				       		<option value="{{r}}" {% if r == content_base[k][j][20] %} selected {% endif %}>{{r}}</option>
+				       	{% endfor %}
+			       	</select>
+					      <select name="Percentage{{content_base[k][j][1]}}" id="Percentage{{k}}_{{j}}" class="form-control popover_height content_sm" style="display: inline;padding-left:10px">
+					             <option value="" disabled selected hidden>Ước tính hoàn thành</option>
+					             {% if content_base[k][j][7] %}
+					             {% set percent = (content_base[k][j][7][:-1])|int %}
+					             {% else %}
+					             {% set percent = 0 %}
+					             {% endif %}
+					             {% for i in range(100,percent-5,-5) %}
+	  				             <option value="{{i}}%" {% if content_base[k][j][7] == i|string+'%' %} selected {% endif %}>{{i}}%</option>
+	  				             {% endfor %}
+					      </select>
+			        <br><br>
+			        <input type="text" name="edit_task_event_fake{{content_base[k][j][1]}}" value="{{content_base[k][j][0]}}" style="display:none">
+			        <button type="button" class="btn btn-default btn_edit_del_ok " style="font-weight:bold;margin-top:1vh" id="ok_{{content_base[k][j][1]}}" name="edit_event" value="{{k}}_{{j}}">OK</button>
+			        <button type="button" class="btn btn-default btn_edit_del_ok " style="font-weight:bold;margin-top:1vh" onclick="task_back_{{k}}_{{j}}()">Back</button>
+			    
+			    </div>
+			    <div id="btn_task_edit_{{k}}_{{j}}"> 
+				<button type="button" id="btn_edit_report" class="btn btn-default btn_edit_del_ok " value="" style="font-weight:bold;" onclick="edit_task_B_{{k}}_{{j}}()">Edit</button>
+				<button type="button" name="delete_event" value="{{content_base[k][j][1]}}" id="btn_edit_report_del_{{content_base[k][j][1]}}" style="font-weight:bold;" class="btn btn-default btn_edit_del_ok ">Delete</button>
+				<button type="submit" class="btn btn-default btn_edit_del_ok" name="tracking" value="{{content_base[k][j][0]}}" style="font-weight:bold;">View Detail</button>
+				<div style="float: right;margin-top: 1.2vh">
+					<button type="submit" name="black" value="{{content_base[k][j][1]}}" id="color_#901d1e" class="button_color B_{{k}}_{{j}}" style="background-color: #901d1e"></button>
+					<button type="submit" name="red" value="{{content_base[k][j][1]}}" id="color_#ff6600" class="button_color B_{{k}}_{{j}}" style="background-color: #ff6600"></button>
+					<button type="submit" name="orange" value="{{content_base[k][j][1]}}" id="color_#056cb9" class="button_color B_{{k}}_{{j}}"  style="background-color:#056cb9"></button>
+					<button type="submit" name="blue" value="{{content_base[k][j][1]}}" id="color_#6fc7b0" class="button_color B_{{k}}_{{j}}" style="background-color: #6fc7b0"></button>
+					<button type="submit" name="green" value="{{content_base[k][j][1]}}" id="color_#6e4375" class="button_color B_{{k}}_{{j}}" style="background-color: #6e4375"></button>
+					<input type="text" value="green" name="get_color_value_{{content_base[k][j][1]}}" id="get_color_value" class="B_{{k}}_{{j}}" style="display: none;">
+				</div>
+				</div>
+		</div>
+	  {% endfor %}
+	</div>
+	</div>
+{% endfor %}
+<!-- <button type="button" id="open_add_new_task" class="glyphicon glyphicon-plus btn_add_new_task" style="outline: none;"></button> -->
+
+<script type="text/javascript">
+	{% for k in range(block_base|length) %}
+		{% for j in range(block_base[k]|length) %}
+				{% for i in range(block_base[k][j][0]|int,block_base[k][j][1]|int) %}
+					try{document.getElementById("task_{{k}}_{{i}}").outerHTML="";}
+					catch(e){}
+				{% endfor %} 
+				var element = document.createElement("div");
+				element.style.width = "{{(block_base[k][j][1]|int-block_base[k][j][0]|int)*(100/(work_hour*12))}}%";
+				element.style.padding = '0';
+				element.style.display = 'inline-block';
+				element.style.height = "65px";
+				element.id = 'task_{{k}}_{{block_base[k][j][1]|int-1}}';
+				element.style.color = "#262626";
+	  			element.style.marginBottom = "1px";
+				element.style.textAlign = 'left';
+				element.style.paddingRight = '0.3vw';
+				element.style.paddingLeft = '0.2vw';
+			    element.style.paddingTop = '0.2vw';
+			    element.style.borderRight = '1px solid #d9d9d9';
+				element.style.borderTop = '5px solid {{content_base[k][j][-1]}}';
+				element.style.background = '#e6e6e6';
+				element.className = "B_{{k}}_{{j}}";
+				element.setAttribute("data-placement","bottom");
+			  	element.style.overflow = 'hidden';
+			  	element.style.whiteSpace = 'nowrap';
+			  	element.style.textOverflow = 'ellipsis';
+				element.innerHTML= 
+				'<p style="font-style:italic" class="B_{{k}}_{{j}} div_inside">Time: {{content_base[k][j][16][:-11]}} - {{content_base[k][j][17][:-11]}}</p>\
+				\
+				<p style="color:black;font-size:10px;margin:0;font-weight:bold;float:left;display:inline-block;width:60%;overflow:hidden;text-overflow:ellipsis" class="B_{{k}}_{{j}}">{{content_base[k][j][2]}}</p>\
+				\
+				<p style="color:black;font-size:9px;margin:0;float:right;display:inline-block;width:39%;overflow:hidden;text-align:right" class="B_{{k}}_{{j}}">{{content_base[k][j][18]}}</p>\
+				\
+				<p class="B_{{k}}_{{j}} div_inside">{{(content_base[k][j][5])|replace("\r\n"," ")|replace("\n"," ")}}</p>\
+									\
+				<p style="font-style:italic" class="B_{{k}}_{{j}} div_inside">Report to: {{content_base[k][j][12]}}</p>';
+				element.style.fontSize ='13px';
+				element.dataHtml = 'true';
+				var nodeafter = document.getElementById("task_{{k}}_{{(block_base[k][j][0]|int-1)}}");
+				nodeafter.parentNode.insertBefore(element,nodeafter.nextSibling);
+		{% endfor %}
+	{% endfor %}
+</script>
+<script type="text/javascript">
+
+	//POPOVER TANG HAM 
+	{% for k in range(block_base|length) %}
+		{% for j in range(block_base[k]|length) %}
+
+		$('.B_{{k}}_{{j}}').popover({
+	    html: true,
+	    title: function () {
+	    	// alert('{{k}}_{{j}}')
+	        return $(this).parent().find('.title_B_{{k}}_{{j}}').html();
+	    },
+	    content: function () {
+	    	// alert(2)
+	   		return $(this).parent().find('.content_B_{{k}}_{{j}}').html();
+	    	}       
+		});
+		function edit_task_B_{{k}}_{{j}}(){
+			document.getElementById('edit_task_B_{{k}}_{{j}}').style.display = "";
+			document.getElementById('btn_task_edit_{{k}}_{{j}}').style.display ="none";
+
+		};
+		function task_back_{{k}}_{{j}}(){
+			document.getElementById('edit_task_B_{{k}}_{{j}}').style.display = "none";
+			document.getElementById('btn_task_edit_{{k}}_{{j}}').style.display ="";
+		};
+
+		$(document).on('click','button[id^="color_"]',function() {
+			var id = $(this).attr('id').substring(6,$(this).attr('id').length);
+			var clas = $(this).attr('class').substring(13,$(this).attr('class').length);
+		    // $("div[class^='"+clas+"']").css("border-top-color", id);\
+		    $("input[class^='"+clas+"']").attr('value',id);
+		    // $('#ok').click();
+
+		});
+		{% endfor %}
+	{% endfor %}
+// // CLICK HTML HIDE POPOVER
+		var btn_clicked_B_once = '';
+	    $("div[class^='B_']").on('click', function(){
+	    	
+	    	if($(this).attr('id') != btn_clicked_B_once){
+	    	try{
+	    		document.getElementById(btn_clicked_B_once).click();
+	    		}
+			catch(e) {} 
+			btn_clicked_B_once = '';
+			btn_clicked_B_once = $(this).attr('id');
+			}
+			else{btn_clicked_B_once = '';}
+	    });
+</script>
+
+<!-- CHEN DE -->
+<script type="text/javascript">
+	function check_time_task() {
+		var i1 = parseInt(back_id_end.substring(2,back_id_end.length));
+		var i2 = parseInt(back_id_start.substring(2,back_id_start.length));
+		var i3=0;
+		var i4=0;
+		var check_week = 0;
+		var check_time_i = 0;
+		{% for i in range(list_index_week|length) %}
+			if({{i}} < i2-1){
+				i3 += {{list_index_week[i]}}
+			}
+			if({{i}} <= i1-1){
+				i4 += {{list_index_week[i]}}
+			}
+		{% endfor %}
+		{% for i in range(block_base|length) %}
+			{% for j in block_base[i] %}
+				if( {{j[1]}} > i2*{{min_unit/5}} && {{j[1]}} <= i1*{{min_unit/5}} || {{j[0]}} >= i2*{{min_unit/5}} && {{j[0]}} <= i1*{{min_unit/5}} || 
+				{{j[0]}} <= i2*{{min_unit/5}} && {{j[1]}} >= i1*{{min_unit/5}}) {
+				check_time_i += 1;
+			
+				}
+				if(check_time_i > 0){
+					alert("Đã có công việc trong khoảng thời gian này, xin mời chọn thời gian khác.")
+					// if(document.getElementById('select_cong_viec').value == 'cong_viec_moi'){
+					//  	document.getElementById('div_chen_cvmoi').innerHTML = '<p style="color:black;margin-top:1.5vh">Đã có một báo cáo khác trong khoảng thời gian này. Bạn muốn:</p><input type="radio" style="width:1.2vw;height:1.2vh;" name="DE" value="T1" id="radio_1" checked>Báo cáo này chèn vào khoảng thời gian còn trống.<br>\
+					// <input type="radio" style="width:1.2vw;height:1.2vh" name="DE" value="T2" id="radio_2">Báo cáo này đè lên báo cáo cũ.';
+					// }
+					// if(document.getElementById('select_cong_viec').value != 'cong_viec_moi'){
+					// 	document.getElementById('div_chen_cvcu'+ document.getElementById('select_cong_viec').value).innerHTML = '<p style="color:black;margin-top:1.5vh">Đã có một báo cáo khác trong khoảng thời gian này. Bạn muốn:</p><input type="radio" style="width:1.2vw;height:1.2vh;" name="DE" value="T1" id="radio_1" checked>Báo cáo này chèn vào khoảng thời gian còn trống.<br>\
+					// <input type="radio" style="width:1.2vw;height:1.2vh" name="DE" value="T2" id="radio_2">Báo cáo này đè lên báo cáo cũ.';
+					// }	
+					back();									
+					check_time_i = 0;
+				}
+			{% endfor %}
+		
+		{% endfor %}
+	}
+
+</script>

@@ -1,0 +1,168 @@
+{% include "layout_2.html" %}
+<head>
+    
+    <link rel="stylesheet" type="text/css" href="/static/content/typeahead_nam.css"/>
+    <!--  -->
+    <script type="text/javascript" src="static/js/jquery-3.2.1.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap-table.js"></script>
+    <script type="text/javascript" src="static/js/tableExport.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap-table-export.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap-table-filter-control.js"></script>   
+    <!--  -->
+    <link rel="stylesheet" type="text/css" href="static/css/bootstrap-table.css">
+    <style type="text/css">
+        /**{border: 1px solid red}*/
+        /*    tbody > tr > td {color:black}
+        thead > tr > th {vertical-align: top !important}*/
+        /*.tt-suggestion{width: 30vw !important;color:black;}*/
+        .tt-dropdown-menu{width: 100% !important;padding: 0!important;margin:0 !important;border-radius: 0;margin-top: -0.5vw !important;margin-left:0.5vw !important }
+        .tt-query{display: inline-block !important;padding:0.5vw !important;margin:0 !important;border-radius: 0;}
+        .twitter-typeahead{width: 15vw !important;padding:0.5vw !important;margin:0 !important;}
+        .li_dien> a#bar_search {
+                background-color:#901E1D !important;
+                font-weight: bold !important;
+                color: white !important;
+                border-bottom: 3px solid #901E1D !important;
+                }
+        thead > tr > th {color: white;background-color: #333;border-radius: 5px !important}
+        ul.dropdown-menu {height: auto !important}
+        ul.pagination > li >a {color: #333}
+        .form-control {width: auto !important;font-size: 100%;border-radius: 0}
+        #executer,#start_time,#end_time {margin-right: 1vw}
+        .pagination>.active>a, .pagination>.active>span, .pagination>.active>a:hover, .pagination>.active>span:hover, .pagination>.active>a:focus, .pagination>.active>span:focus
+        {z-index: 2; color: #fff; cursor: default; background-color: #333; border-color: #333;}
+        .bootstrap-table-filter-control-complete, .bootstrap-table-filter-control-nguoi_thuc_hien, .bootstrap-table-filter-control-jobs_name, .bootstrap-table-filter-control-jobs_type, .bootstrap-table-filter-control-content, .bootstrap-table-filter-control-start, .bootstrap-table-filter-control-end {width: 100% !important}
+        .complete > option, .nguoi_thuc_hien > option, .jobs_name > option, .jobs_type > option, .content > option, .start > option, .end > option {word-wrap: break-word !important}
+        #btn_view_event:hover {color: black;font-weight: bold;}
+        #btn_view_event {font-weight: bold;}
+        label,.pagination-info, .page-list {color: black !important}
+        .twitter-typeahead {width: 17%}
+        div.tt-suggestion {color: black !important}
+        .tt-hint {margin-top: -0.3vh;display: none}
+        .pull-right {margin-top: 2.2vh !important}
+        .th_table {vertical-align: top !important;text-align: left}
+        .filter-control {width: 100% !important}
+        .danger {background-color: #ff9999 !important}
+        .succes {background-color: #b3ffb3 !important}
+    </style>
+</head>
+{% block content %}
+    <div style="width: 95%;margin: 0 auto;margin-top: 5vh">
+        <form novalidate="novalidate" class="form-inline" method="POST" id="bang1">
+            <div id="toolbar" style="display: ">
+                <label class="" for="executer">Người thực hiện/ Tên công việc: </label>
+                    <input type="text" name="executer" id="executer" class="form-control" value="{{session['executer_name']}}" style="width: 100% !important">
+                <label class="" for="start_time">Bắt đầu: </label>
+                    <input type="date" name="start_time" id="start_time" class="form-control" value="{{session['time_select']}}"> 
+                <label for="end_time">Kết thúc: </label>
+                    <input type="date" name="end_time" id="end_time" class="form-control" value="{{session['time_end_select']}}">        
+                <button type="submit" id="btn_view_event" name="view_content" value="Xem" class="btn btn-danger">Xem</button>
+            </div>
+            <div>
+                <table class="myTable" id="myTable" 
+                data-toolbar="#toolbar"
+                data-toggle="table"
+                data-show-toggle="true" 
+                data-sort-order="desc"
+                data-show-columns="true"
+                data-card-view="false"
+                data-pagination="true"
+                data-page-size="25"
+                data-page-list="[25, 50, 100, ALL]"
+                data-pagination-first-text="First"
+                data-pagination-pre-text="Previous"
+                data-pagination-next-text="Next"
+                data-pagination-last-text="Last"
+                data-search="false"
+                data-show-export="false"
+                data-show-pagination-switch="true"
+                data-filter-control="true"
+                data-filter-show-clear="true"
+                data-click-to-select="false"
+                data-show-refresh="false"
+                data-export-types="['excel', 'pdf']"
+                data-export-options='{
+                    "fileName": "Báo cáo công việc", 
+                    "worksheetName": "Sheet 1",         
+                    "jspdf": {                  
+                        "autotable": {
+                            "styles": { "rowHeight": 20, "fontSize": 10 },
+                            "headerStyles": { "fillColor": 255, "textColor": 0 },
+                            "alternateRowStyles": { "fillColor": [60, 69, 79], "textColor": 255 }
+                            }}
+                        }'       
+                >
+                <col width="10%">
+                <col width="15%">
+                <col width="15%">
+                <col width="30%">
+                <col width="10%">
+                <col width="10%">
+                <col width="10%">
+                    <thead>
+                        <tr>
+                            <th class="th_table" data-sortable="true" data-field="nguoi_thuc_hien" data-filter-control="select"  style="width: 15%;border-bottom: 1px solid #901e1d;">Người thực hiện</th>
+                            <th class="th_table" data-sortable="true" data-field="jobs_name" data-filter-control="select" style="width: 22%;border-bottom: 1px solid #901e1d;">Tên công việc</th>
+                            <th class="th_table" data-sortable="true" data-field="jobs_type" data-filter-control="select" style="width: 10%;border-bottom: 1px solid #901e1d;">Nhóm công việc</th>
+                            <th class="th_table" data-sortable="true" data-field="content"  style="width: 35%;border-bottom: 1px solid #901e1d;">Nội dung</th>
+                            <th class="th_table" data-sortable="true" data-field="complete"  style="width: 6%;border-bottom: 1px solid #901e1d;">Hoàn thành</th>         
+                            <th class="th_table" data-sortable="true" data-field="start"  style="width: 6%;border-bottom: 1px solid #901e1d;">Thời gian bắt đầu</th>
+                            <th class="th_table" data-sortable="true" data-field="end"  style="width: 6%;border-bottom: 1px solid #901e1d;">Thời gian kết thúc</th>
+                        </tr>            
+                    </thead>
+                    <tbody> 
+                        {% for i in list_content %}
+                            {% if i|length > 1 %}
+                                {% set time_start = i[7].split(" ")[0] +' '+ (i[7].split(" ")[1]).split("/")[1]+'/'+(i[7].split(" ")[1]).split("/")[0]+"/"+(i[7].split(" ")[1]).split("/")[2] %}
+                                {% set end_start = i[8].split(" ")[0] +' '+ (i[8].split(" ")[1]).split("/")[1]+'/'+(i[8].split(" ")[1]).split("/")[0]+"/"+(i[8].split(" ")[1]).split("/")[2] %}
+                                <tr>
+                                    <td>{{i[1]}}</td>
+                                    <td><button type="button" name="" value="{{i[9]}}" style="border:none;outline: none;background-color: transparent;text-align: left;">{{i[2]}}</button></td>
+                                    <td>{{i[3]}}</td>
+                                    <td>{{i[5]}}</td>
+                                    <td  class="{% if i[6] == '100%' %} success {% else %} danger {% endif %}">{{i[6]}}</td>
+                                    <td>{{time_start}}</td>
+                                    <td>{{end_start}}</td>
+                                </tr>
+                            {% endif %}                    
+                        {% endfor %}             
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+<script src="/static/scripts/typeahead.min.js"></script>
+<script type="text/javascript">
+    var $list_name_assignee = [];
+    {% for t in list_assignee %}
+        $list_name_assignee.push("{{t[1]}}")
+    {% endfor %}
+    $('#executer').typeahead({        
+        local: $list_name_assignee
+    });                                    
+</script>
+
+<script type="text/javascript">
+    $(document).on('click','ul.dropdown-menu > li > a',function(){
+        $('div.columns > button').trigger('click') ;
+        return false
+    });
+</script>
+
+<script type="text/javascript">
+    $("#btn_view_event").click(function() {
+        if($("#start_time").val() != '' && $("#end_time").val() == ''){
+            alert("Xin mời chọn thời gian kết thúc.");
+            $("#end_time").focus();
+            return false;
+        }
+        if($("#start_time").val() == '' && $("#end_time").val() != ''){
+            alert("Xin mời chọn thời gian bắt đầu.");
+            $("#start_time").focus();
+            return false;
+        }
+        return true;
+        // alert($("#start_time").val())
+    })
+</script>
+{% endblock %}

@@ -1,0 +1,341 @@
+{% include "layout_T.html" %}
+    <link rel="icon" href="static/images/download.jpg" />
+    <script type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" src="static/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
+    <!-- BS select  -->
+    <link rel="stylesheet" href="static/css/bootstrap-select.min.css">
+    <script src="static/js/bootstrap-select.min.js"></script>
+    <link rel="stylesheet" href="static/css/bootstrap-multiselect.css" type="text/css">
+    <script type="text/javascript" src="static/js/bootstrap-multiselect.js"></script>
+    <script type="text/javascript" src="static/js/bootstrap-confirmation.min.js"></script>
+
+   
+	<style type="text/css">
+		body {background-color: #d9d9d9} 
+		th {text-align: center;}
+		div#container {margin-top: 10vh}
+		div#container2 {margin-top: 5vh;margin-bottom: 5vh}
+		.table thead>tr>th, .table tbody>tr>th, .table tfoot>tr>th, .table thead>tr>td, .table tbody>tr>td, .table tfoot>tr>td {padding: 3px}
+		.btn-group {width: 100% !important}
+		.bold {font-weight: bold;}
+		.order {text-align: center;}
+		.btn-delete {width: 40px}
+		.label {font-size: 125%}
+		a.btn-danger {
+			padding: 0; width: 40%;
+		}
+		a.btn-warning {
+			padding: 0; width: 60%;
+		}
+		.popover-title {
+			font-weight: bold;
+		}
+		input {padding: 4px 8px !important;}
+	</style>
+{% block content %}
+<script type=text/javascript>
+    var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+</script>
+<form method="POST" id="submit_job_type"> 
+	
+	<div class="container" id="container2" style="margin-top: 10vh">
+		<!-- SELECT DEPARTMENT -->
+		<div style="margin-bottom: 5vh;width: 50vw;">
+	        <select class="form-control" name="select_department" id="select_department">
+				<option disabled selected>Trung tâm</option>
+	        	{% for i in list_phong %}
+					<option {% if i[0] == session['department'] %} selected {% endif %} >{{i[0]}}</option>
+				{% endfor %}
+			</select>
+		</div>		
+		<!-- USER INFO -->
+
+		<input type="text" name="len_row_user" id="len_row_user" style="display:none">
+	    <table id="myTable2" class=" table order-list_user" style="width: 100%; display: {% if session['department'] != '' %}block{% else %}none{% endif %};">
+
+
+		    <thead>
+		        <tr>
+		        	<th><span class="label label-default">STT</span></th>
+		            <th><span class="label label-default">Tên đăng nhập</span></th>
+		            <th><span class="label label-default">Họ tên</span></th>
+		            <th><span class="label label-default">Tên hiển thị</span></th>
+		            <th><span class="label label-default">Mã NV</span></th>
+
+		            <th><span class="label label-default">Mảng</span></th>
+		            <th><span class="label label-default">N-1</span></th>
+		            <th><span class="label label-default">N-2</span></th>
+		            <th><span class="label label-default">N-3</span></th>
+		        </tr>
+		    </thead>
+		    <tbody id="tbody_user_info">
+		    	{% for i in range(list_user_in_department|length) %}
+			        <tr id="div_pp_{{i}}" class="people">
+			        	<!-- STT -->
+			        	<td style="width: 5%">
+			        		<input type="text" name="" value="{{i+1}}" class="order form-control" disabled="">
+			        	</td>
+			        	<!-- USERNAME -->
+			            <td style="width: 8%">
+			                <input type="text"  name="Username_{{i}}" id="Username_{{i}}" value="{{list_user_in_department[i][0]}}" class="pp_username form-control" required>
+			            </td>
+			            <!-- NAME -->
+			            <td style="width: 25%">
+			                <input type="text"  name="name_{{i}}" id="name_{{i}}" value="{{list_user_in_department[i][1]}}" class="pp_fullname bold form-control" required>
+			            </td>
+			            <!-- MAIL NAME -->
+			            <td style="width: 25%">
+			                <input type="text"  name="mail_{{i}}" id="mail_{{i}}" value="{{list_user_in_department[i][2]}}" class="pp_mail form-control" required>
+			            </td>
+			            <td style="width: 5%">
+			                <input type="text"  name="ma_nv_{{i}}" id="ma_nv_{{i}}" value="{{list_user_in_department[i][7]}}" class="pp_mail form-control" required>
+			            </td>
+			            <!-- MẢNG -->
+			            <td style="width: 12%">
+			            	<select class="form-control" id="select_bp_{{i}}">
+			            		<!-- <option selected disabled>Please select</option> -->
+			            		{% for r in list_bo_phan %}
+			            			<option value="{{r}}" {% if r == list_user_in_department[i][6] %} selected {% endif %}>{{r}}</option>
+			            		{% endfor %}
+			            	</select>
+			            </td>
+			            <!-- N1 -->
+			            <td style="width: 12%">
+			            	<select class="form-control" id="assigner1_{{i}}">
+			            		<!-- <option selected disabled>Please select</option> -->
+			            		{% for r in list_user_name %}
+			            			<option value="{{r}}" {% if r == list_user_in_department[i][3] %} selected {% endif %}>{{r}}</option>
+			            		{% endfor %}
+			            	</select>
+			            </td>
+			            <!-- N2 -->
+			            <td style="width: 12%">
+			            	<select class="form-control"  id="assigner2_{{i}}">
+			            		<!-- <option selected disabled>Please select</option> -->
+								{% for r in list_user_name %}
+									<option value="{{r}}" {% if r == list_user_in_department[i][4] %} selected {% endif %}>{{r}}</option>
+								{% endfor %}
+							</select>
+			            </td>
+			            <!-- N3 -->
+			            <td style="width: 12%">
+			            	<select class="form-control"  id="assigner3_{{i}}">
+			            		<!-- <option selected disabled>Please select</option> -->
+								{% for r in list_user_name %}
+									<option value="{{r}}" {% if r == list_user_in_department[i][5] %} selected {% endif %}>{{r}}</option>
+								{% endfor %}
+							</select>
+			            </td>
+			            <td style="width: 5%">
+			            	<button type="button" id="ibtnSave_user_{{i}}" class="ibtnSave_user btn btn-md btn-success btn-delete" value="Save"><span class="glyphicon glyphicon-ok"></span></button>
+			            </td>		            
+			            <td style="width: 5%">
+			            	<button type="button" id="ibtnDel_user_{{i}}" class="ibtnDel_user btn btn-md btn-danger btn-delete" value="Delete" data-placement="top" data-toggle="confirmation" data-title="Xóa User {{list_user_in_department[i][0]}} khỏi hệ thống?" data-content=""><span class="glyphicon glyphicon-remove"></span></button>
+			            	
+			            </td>
+			            
+			        </tr>
+			    {% endfor %}
+		    </tbody>
+		    <tfoot>
+		        <tr>
+		            <td colspan="5">
+	                	<button type="button" class="btn btn-md btn-warning " id="addrow_user"><span class="glyphicon glyphicon-plus"></span></button>
+	                	<!-- <button type="submit" class="btn btn-md btn-primary" name="submit_user" id="submit_user" value="1"> <span class="glyphicon glyphicon-floppy-saved"></span> </button> -->
+		            </td>
+		        </tr>
+		        <tr>
+		        </tr>
+		    </tfoot>
+		</table>
+	</div>
+</form>
+<!-- CHANGE DEPARTMENT -->
+<script type="text/javascript">
+	$("#select_department").change(function() {
+		$("#submit_job_type").submit()
+	})
+</script>
+
+
+<!-- SUBMIT -->
+<script type="text/javascript">
+	// UPDATE USER
+	$("[id^='ibtnSave_user_']").click(function() {
+		let row_num = $(this).attr("id").split("ibtnSave_user_")[1]	
+		console.log($(`#ma_nv_${row_num}`).val())
+		$.getJSON($SCRIPT_ROOT + '/ajax_update_user_info', {
+			Username :$(`#Username_${row_num}`).val(),
+			ma_nv :$(`#ma_nv_${row_num}`).val(),
+			name :$(`#name_${row_num}`).val(),
+			mail :$(`#mail_${row_num}`).val(),
+			select_bp :$(`#select_bp_${row_num}`).val(),
+			assigner1 :$(`#assigner1_${row_num}`).val(),
+			assigner2 :$(`#assigner2_${row_num}`).val(),
+			assigner3 :$(`#assigner3_${row_num}`).val()
+		}, function(data) { 
+
+		})
+		return false;
+	})
+
+	// ADD USER
+	$(document).on("click","[id^='ibtnAdd_user_']", function () {
+		let row_num = $(this).attr("id").split("ibtnAdd_user_")[1]	
+		$.getJSON($SCRIPT_ROOT + '/ajax_add_user_info', {
+			Username :$(`#Username_${row_num}`).val(),
+			ma_nv :$(`#ma_nv_${row_num}`).val(),
+			name :$(`#name_${row_num}`).val(),
+			mail :$(`#mail_${row_num}`).val(),
+			select_bp :$(`#select_bp_${row_num}`).val(),
+			assigner1 :$(`#assigner1_${row_num}`).val(),
+			assigner2 :$(`#assigner2_${row_num}`).val(),
+			assigner3 :$(`#assigner3_${row_num}`).val()
+		}, function(data) { 
+
+		})
+		return false;
+	})
+	// DEL USER
+	$('[data-toggle=confirmation]').confirmation({
+		rootSelector: '[data-toggle=confirmation]',
+		onConfirm: function() {
+			let row_num = $(this).attr("id").split("ibtnDel_user_")[1]	
+			$.getJSON($SCRIPT_ROOT + '/ajax_del_user_info', {
+				Username :$(`#Username_${row_num}`).val(),
+			}, function(data) { 
+				$(`#ibtnDel_user_${row_num}`).closest("tr").remove();
+			})
+			return false;
+		},
+		onCancel: function() {
+		},
+		popout: true,
+		singleton: true,
+		btnOkLabel: 'Xác nhận',
+		btnCancelLabel: 'Hủy',
+		btnCancelClass: 'btn-danger',
+		btnCancelIcon: 'glyphicon glyphicon-remove',
+		btnOkClass: 'btn-warning',
+		btnOkIcon: 'glyphicon glyphicon-ok',
+
+	})
+
+	$(document).on("click","[class^='ibtnDel_user_new']", function () {
+		$(this).closest("tr").remove();
+	})
+</script>
+
+<script type="text/javascript">
+	$(document).ready(function () {
+	    var len_div_pp = {{list_user_in_department|length}};
+	    $(document).on("click","#addrow_user", function () {
+	        var newRow = $('<tr id="div_pp_'+len_div_pp+'" class="people">');
+	        var cols = "";
+			cols += '<td><input type="text"  name="" value="'+(len_div_pp+1)+'" class="order form-control" disabled=""></td>'
+
+			cols += '<td><input type="text"  id="Username_'+ len_div_pp +'" value="" class="form-control pp_username" required></td>'
+
+	        cols += '<td><input type="text"  id="name_'+ len_div_pp +'" value="" class="form-control pp_fullname bold" required></td>'
+
+	        cols += '<td><input type="text"  id="mail_'+ len_div_pp +'" value="" class="form-control pp_mail" required></td>'
+	        cols += '<td><input type="text"  id="ma_nv_'+ len_div_pp +'" value="" class="form-control pp_mail" required></td>'
+
+	        cols += '<td style="width: 12%">\
+			            	<select class="form-control" id="select_bp_'+ len_div_pp +'">\
+			            		{% for r in list_bo_phan %}\
+			            			<option value="{{r}}">{{r}}</option>\
+			            		{% endfor %}\
+			            	</select>\
+			            </td>'
+	        cols += '<td><select class="form-control" id="assigner1_'+len_div_pp+'">\
+							{% for i in list_user_name %}\
+							<option value="{{i}}">{{i}}</option>\
+							{% endfor %}\
+						</select>\
+					</td>'
+			cols += '<td><select class="form-control" id="assigner2_'+len_div_pp+'">\
+							{% for i in list_user_name %}\
+								<option value="{{i}}">{{i}}</option>\
+							{% endfor %}\
+						</select>\
+					</td>'
+			cols += '<td><select class="form-control" id="assigner3_'+len_div_pp+'">\
+							{% for i in list_user_name %}\
+								<option value="{{i}}">{{i}}</option>\
+							{% endfor %}\
+						</select>\
+					</td>'
+			cols += '<td><button type="button" id="ibtnAdd_user_'+len_div_pp+'" class="ibtnAdd_user btn btn-md btn-success btn-delete" value="Submit"><span class="glyphicon glyphicon-ok"></span></button></td>'
+			cols += '<td><button type="button" id="ibtnDel_user_'+len_div_pp+'" class="ibtnDel_user_new btn btn-md btn-danger btn-delete" value="Delete"><span class="glyphicon glyphicon-remove"></span></button></td>'
+
+	        newRow.append(cols);
+	        $("table.order-list_user").append(newRow);
+	        $('select[id^="status_"]').change(function () {
+	        	if ($(this).val() != 'enable') {
+	        		$(this).css('background-color', '#d9534f');
+	        	} else {
+	        		$(this).css('background-color', '#4cae4c');
+	        	}
+	        }).trigger('change');
+	        console.log(len_div_pp)
+	        len_div_pp+=1;
+	    });
+	    
+
+
+	});
+</script>
+
+
+
+<script type="text/javascript">
+	$('#submit_user').click(function(){
+		name_pp1 = 0;
+		name_pp2 = 0;
+		name_pp3 = 0;
+		name_pp4 = 0;
+		name_pp5 = 0;
+		name_pp6 = 0;
+		name_pp7 = 0;
+		$('.pp_username').each(function(){	
+			$(this).attr('name','pp_username_'+ name_pp1);
+			name_pp1 ++;
+		});
+		$('.pp_fullname').each(function(){	
+			$(this).attr('name','pp_fullname_'+ name_pp2);
+			name_pp2 ++;
+		});
+		$('.pp_mail').each(function(){	
+			$(this).attr('name','pp_mail_'+ name_pp3);
+			name_pp3 ++;
+		});
+		$('select[id^="assigner1_"]').each(function(){	
+			$(this).attr('name','assigner1_'+ name_pp4);
+			name_pp4 ++;
+		});
+		$('select[id^="assigner2_"]').each(function(){	
+			$(this).attr('name','assigner2_'+ name_pp5);
+			name_pp5 ++;
+		});
+		$('select[id^="assigner3_"]').each(function(){	
+			$(this).attr('name','assigner3_'+ name_pp6);
+			name_pp6 ++;
+		});
+		$('select[id^="status_"]').each(function(){	
+			$(this).attr('name','status_'+ name_pp7);
+			name_pp7 ++;
+		});
+		$('#len_row_user').val($('.people').length);	
+	});
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+

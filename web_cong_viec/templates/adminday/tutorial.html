@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}-Quản lý thông tin cá nhân</title>
+    <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/nam3.css" />
+  
+    <script src="/static/scripts/jquery-1.10.2.js"></script>
+    <script src="/static/scripts/bootstrap.js"></script>
+    
+    <script src="/static/scripts/respond.js"></script>
+  <style>
+  .navbar {border-bottom-color: #262626;}
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: black;
+        height: 100%
+    }
+
+    .li_dien {
+        float: left;
+        margin: 0 auto; 
+        text-align: center
+    }
+
+    .li_dien>a {
+        display: block;
+        color: white;
+        text-align: center;
+        vertical-align: middle;
+        padding: 14.5px;
+        text-decoration: none;
+
+    }
+
+    .li_dien>a.hover_accept:hover {
+        background-color: #262626;
+        color:white;
+        border-bottom: 3px solid #901E1D !important;
+    }
+    .li_dien>a.hover_accept{
+        /*background-color: #111;*/
+        font-size: 1.22vh;
+        color: #cccccc
+    }
+    /*.head_bar{font-size: 2vh}*/
+    #div_noti >div.popover {
+        border-radius: 0;
+        overflow: hidden;width: 17.5vw;
+        background-color: #262626;
+        color: #cccccc;
+    }
+    #noti_part:hover {
+        color:white !important;
+        ;}
+    #today_1:hover {
+        color:white !important;
+        ;}   
+    #div_noti >div.popover>div.popover-content {
+        padding: 0 !important;  padding-bottom: 10px !important;height:60vh; overflow: auto;
+    padding-right: 20px !important;width: 19.7vw;color: #cccccc;}
+    
+    body {overflow-x: hidden;
+        background-color: black}
+    .noti_head {background-color:   #901E1D}
+    #div_noti >div.popover>h3.popover-title {background-color: #262626}
+    div.popover{border-radius: 0;background-color: #262626}
+    div.popover>h3.popover-title {background-color: #262626;}
+    div.popover>div.popover-content {background-color: #262626;}
+    label.popover_title {color: #666666;}
+    label.pop_tt_content {color: #cccccc !important;}
+    /*::-webkit-scrollbar{display: none};*/
+    .li_dien>a {padding-left:0 !important;padding-top: 1.1vh !important;height: 3.5vh !important;padding-right: 0}
+  .col-md-12 {padding-top:10px;}
+  .c-btn{
+    width:100vw;background-color: transparent;border: none;outline:none;color:#cccccc;font-weight: bold;font-size: 80% 
+  }
+  .c-btn:hover{background-color: transparent;color: #cccccc;border: none;outline:none;}
+  .c-btn:active{background-color: transparent;color: #cccccc;border: none;outline:none;}
+  .div_label{
+    font-weight: bold;font-size: 20px;color: #901e1d;
+  }
+  </style>
+
+<script type="text/javascript">
+
+function disableF5(e) {if ((e.which || e.keyCode) == 116) e.preventDefault();};
+{% set list_admin = ['namht3','phunq','tult2'] %}
+{% if session.username not in list_admin %}
+  $(document).on("keydown",disableF5);
+{% endif %}
+
+</script> 
+</head> 
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top" style="min-height: 1px !important;height: 3.5vh !important;padding-top: 0 !important;border-bottom:none">
+
+<ul style="">
+<li class="li_dien" style="width: {% if list_assignee|length > 0 %}41.7vw{% else %}52.7vw{% endif %};font-size: 0"><a href="#news">News</a></li>
+
+  <li class="li_dien head_bar" style="width: 5vw"><a class = "hover_accept" href="intro" id="intro" style="text-decoration: none;border-bottom: 3px solid #262626">HOME</a></li>
+  <li class="li_dien head_bar" style="width: 4vw"><a class = "hover_accept" href="myjob" id="rpt" style="text-decoration: none;border-bottom: 3px solid #262626" >MY JOB</a></li>
+    {% if  list_assignee|length > 0 %}
+  <li class="li_dien head_bar" style="width: 6vw"><a class = "hover_accept" href="management" id="mng" style="text-decoration: none;border-bottom: 3px solid #262626" >MANAGEMENT</a></li>
+      {% endif %}
+  <li class="li_dien head_bar" style="width: 4vw"><a class = "hover_accept" href="profile" id="prf" style="text-decoration: none;border-bottom: 3px solid #262626">PROFILE</a></li>
+  {% if  list_assignee|length > 0 %}
+  <li class="li_dien head_bar" style="width: 5vw"><a class = "hover_accept" href="task_report" id="rp_task" style="text-decoration: none;border-bottom: 3px solid #262626">REPORT</a></li>
+  {% endif %}
+  <li class="li_dien head_bar" style="width: 5vw"><a class = "hover_accept" href="tutorial" id="tut" style="text-decoration: none;border-bottom: 3px solid #262626">TUTORIAL</a></li>  
+    <!--   <li class="li_dien head_bar" style="width: 4vw"><a class = "hover_accept" href="task_report" id="trp" style="text-decoration: none;border-bottom: 3px solid #262626" >REPORT</a></li> -->
+      <li class="li_dien head_bar" style="width: 12vw;background-color: #901E1D"><a class = "hover_accept" href="/logout" style="text-decoration: none;border-bottom: 3px solid #901E1D" onclick="logout();" onmouseover="javascript:this.innerHTML = 'SIGN OUT';" onmouseout="javascript:this.innerHTML = '{{session['mail_name']}}';">{{session['mail_name']}}</a></li>
+      <!-- LI NOTI -->
+     <li class="li_dien" style="width: 16.5vw;height:40px;margin-top:2px">
+     <div id="div_unread_num" style="position:absolute;height:13px;width:11px;font-size:1vh;margin-left: 8.4vw;background-color:transparent;color: transparent;display:block" >{{unread_number}}</div>
+
+     <div id="div_noti" style="height:100%;width: 100%;margin:0;padding:0;float:left;margin-top: 5px;border-color:#901E1D">
+         <button class="notification" id="noti_btn" data-placement="bottom" type="button" style="border:none;outline:none;background: url(/static/images/noti3.png) no-repeat;background-size:100% 100%;
+         height:16px;width:16px" onclick="unread_fake()">&nbsp;</button>
+         <div class="noti_head hide" ><button style="color: #cccccc;background-color:transparent;border:none" disabled>Thông báo</button></div>
+         <div class="noti_content hide">
+         {% if list_noti == [] %}
+         <div style="padding:0.5vh;margin:0;">
+         Chưa có thông báo nào
+         </div>
+         {% endif %}
+         {% for i in range(list_noti|length) %}
+            <div style="padding:0;margin:0;">
+                <button type="submit" style="height:9vh;text-align: left;width:100%;border:none;outline:none;background-color:{% if list_noti[i][6] == 'N' %}#666666;{% else %}#262626;{% endif %};color: #cccccc" id="noti_part" name="" value="" onclick="sub_noti_{{i}}()">{{list_noti[i][1]}}<br>
+                    <span style="font-size:1.2vh;">{{list_noti[i][2]}}</span>
+                </button>
+
+             
+            </div>
+
+         {% endfor %}   
+            
+         </div>
+     </div>
+
+     </li>
+         
+     <!--  -->
+     
+  
+</ul>
+<script type="text/javascript">
+
+    function unread_fake(){
+        document.getElementById('div_unread_num').innerHTML = '';
+        document.getElementById('div_unread_num').style.background = 'transparent';
+        document.getElementById('div_unread_num').style.color = 'transparent';
+    };
+    {% for i in range(list_noti|length) %}
+    function sub_noti_{{i}}(){
+        document.getElementById('btn_f_{{i}}').click();
+    };
+    {% endfor %}
+
+    
+    if(String(window.location).split('5000/')[1] == 'tutorial' || String(window.location).split('5000/')[1] == 'tutorial#') {
+    document.getElementById('tut').style.borderBottomColor = '#901E1D';
+    }
+</script>
+</div>
+<!-- BAO CAO -->
+<div>
+    <button type="button" class="c-btn" onclick="f1(event);" id="cv_moi">LÀM BÁO CÁO</button>
+    <button type="button" class="c-btn" onclick="f1(event);" id="giaoviec">GIAO VIỆC</button>
+    <button type="button" class="c-btn" onclick="f1(event);" id="chen">TẠO BÁO CÁO THAY THẾ BÁO CÁO KHÁC</button>
+    <button type="button" class="c-btn" onclick="f1(event);" id="day_week">THAY ĐỔI GIỮA NGÀY VÀ TUẦN </button>
+    <button type="button" class="c-btn" onclick="f1(event);" id="view">THEO DÕI 1 CÔNG VIỆC  </button>
+    <button type="button" class="c-btn" onclick="f1(event);" id="change"> ĐỔI MẬT KHẨU VÀ LẤY LẠI MẬT KHẨU KHI BỊ MẤT </button>
+</div>
+<hr align="center" width="50%" style="margin:10px auto">
+<div style="text-align: center;display: none" id="div_cv_moi">
+    <div class="div_label">
+      LÀM BÁO CÁO CÔNG VIỆC MỚI
+    </div>
+    <div style="margin-left:-1vw;display:inline-block;height: 75vh;width: 90vw;background: url(/static/images/tut1.gif) no-repeat;background-size:100% 100%;">
+    </div>
+    <div class="div_label">
+      LÀM BÁO CÁO CÔNG VIỆC CŨ
+    </div>
+    <div style="margin-left:-1vw;display:inline-block;height: 75vh;width: 90vw;background: url(/static/images/tut2.gif) no-repeat;background-size:100% 100%;">
+    </div>
+</div>
+
+<div style="text-align: center;display: none" id="div_giaoviec">
+    <div class="div_label">
+      GIAO VIỆC
+    </div>
+    <div style="margin-left:-1vw;display:inline-block;height: 75vh;width: 90vw;background: url(/static/images/tut5.gif) no-repeat;background-size:100% 100%;">
+    </div>
+</div>
+
+<div style="text-align: center;display: none" id="div_chen">
+    <div class="div_label">
+       TẠO BÁO CÁO MỚI THAY THẾ BÁO CÁO KHÁC
+    </div>
+    <div style="margin-left:-1vw;display:inline-block;height: 75vh;width: 90vw;background: url(/static/images/tut3.gif) no-repeat;background-size:100% 100%;">
+    </div>
+</div>
+
+<div style="text-align: center;display: none" id="div_day_week">
+
+    <div class="div_label">
+        THAY ĐỔI GIỮA NGÀY VÀ TUẦN   
+    </div>
+    <div style="margin-left:-1vw;display:inline-block;height: 75vh;width: 90vw;background: url(/static/images/tut4.gif) no-repeat;background-size:100% 100%;">
+    </div>
+</div>
+
+<div style="text-align: center;display: none" id="div_view">
+
+    <div class="div_label">
+         THEO DÕI 1 CÔNG VIỆC  
+    </div>
+    <div style="margin-left:-1vw;display:inline-block;height: 75vh;width: 90vw;background: url(/static/images/tut6.gif) no-repeat;background-size:100% 100%;">
+    </div>
+</div>
+
+<div style="text-align: center;display:none " id="div_change">
+    <div class="div_label">
+         ĐỔI MẬT KHẨU VÀ LẤY LẠI MẬT KHẨU KHI BỊ MẤT 
+    </div>
+    <div style="margin-left:-1vw;display:inline-block;height: 75vh;width: 90vw;background: url(/static/images/tut7.gif) no-repeat;background-size:100% 100%;">
+    </div>
+</div>
+
+<script type="text/javascript">
+var list_click = chen;
+  function f1(event){
+      // alert(list_click)
+
+        var evt =  event.target.id || event.srcElement.id;
+        if(list_click != evt){
+          try{
+             document.getElementById(list_click).click()
+          }
+          catch(e){}
+          list_click = evt;
+        }else if(list_click == evt){
+          list_click='';
+        }
+        // alert(list_click)
+  }
+</script>
+<script type="text/javascript">
+  $('button[id="change"]').click(function(){
+    $('#div_change').toggle();
+
+  })
+  $('#cv_moi').click(function(){
+    $('#div_cv_moi').toggle();
+  })
+  $('#giaoviec').click(function(){
+    $('#div_giaoviec').toggle();
+  })
+  $('#chen').click(function(){
+    $('#div_chen').toggle();
+  })
+  $('#day_week').click(function(){
+    $('#div_day_week').toggle();
+  })
+  $('#view').click(function(){
+    $('#div_view').toggle();
+  })
+
+
+</script>
+<script type="text/javascript">
+$('.notification').popover({
+  html: true,
+  title: function () {
+    return $(this).parent().find('.noti_head').html();
+  },
+  content: function () {
+    return $(this).parent().find('.noti_content').html();
+
+  }   
+});
+var click_noti;
+  $("button[id^='noti_btn']").on('click', function(){
+      if($(this).attr('id') != click_noti){
+        try {
+          document.getElementById(click_noti).click();
+        }
+        catch(e) {} 
+        click_noti = '';
+      click_noti = $(this).attr('id');
+      }
+      else{click_noti = '';}
+    });
+$('html').on('click', function(e) {
+  if (typeof $(e.target).data('original-title') == 'undefined' && !$(e.target).parents().is('.popover.in')) {
+    try{
+    document.getElementById(click_noti).click();
+    
+    }
+    catch(e) {} 
+    click_noti = '';
+  };
+});
+</script>
+<form novalidate="novalidate" class="form-inline" method="POST" id="bang1">
+  <!-- NOTI -->
+     {% for i in range(list_noti|length) %}
+    <button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+          <span style="font-size:1.2vh;margin-left:-11vw">{{list_noti[i][2]}}</span>
+        </button>
+        
+        <input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+        <input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+        <input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+    {% endfor %}
+  </form>
+</body>
+</html>
+    
+    
+    
+    
+    
+    
+    
+    

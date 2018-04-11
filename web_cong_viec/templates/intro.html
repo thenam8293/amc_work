@@ -1,0 +1,330 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<style type="text/css">
+	/**{border:1px solid white;}*/
+	#bar {
+	    width: 10%;
+	    background-color: #901e1d;
+	    text-align: center; /* To center it horizontally (if you want) */
+	    line-height: 2vh; /* To center it vertically */
+	    color: white; 
+	    padding: 0 !important;
+	}
+	.category_bar{
+	    width: 10%;
+	    background-color: #901e1d;
+	    text-align: center;
+	    line-height: 1.5vh; 
+	    color: white; 
+	    padding: 0 !important;
+	}
+	#total_time {line-height: 2vh}
+	td {padding:0;padding-left: 10px;
+    
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: black;font-size: 1.5vh
+	}
+	tr {height: 25px;}
+	button{border:none;outline:none;background-color:transparent;padding:0}
+	.category_right{font-size:120%;width:70%;display:inline-block;color: black;}
+	.category_left{width:30%;display:inline-block;height:5vh}
+	.total_task{height:14vh;padding-left:8px;font-size:170%;font-weight:normal}
+	.total_task_detail{height: 4vh;padding-left: 10px;font-size: 1.3vh}
+	.table_task_notfinish{overflow-y: scroll;display: inline-block;font-size: 1.7vh;}
+	.my_title{font-size:2.3vh;width:65vw;margin:0 auto;color:#901e1d;margin-top: 1.5vh;height:2.3vh}
+	.total_task_parent{padding:1vh;width:32.5vw;display:inline-block;}
+	.category_content{overflow: hidden;text-overflow: ellipsis;white-space: nowrap;color: black;font-size: 1.7vh;line-height: 2.5vh}
+
+
+	::-webkit-scrollbar{display: none};
+
+</style>
+<style type="text/css">
+    .li_dien> a#bar_intro {
+        background-color:#901E1D !important;
+        font-weight: bold !important;
+        color: white !important;
+        border-bottom: 3px solid #901E1D !important;
+        }
+</style>
+<div style="position:absolute;width:100vw">
+
+<script type="text/javascript">
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/_noti_read_fake', {
+      });
+      return false;
+    };
+    $('button#noti_btn').bind('click', submit_form);
+  });
+</script>
+
+<form novalidate="novalidate" class="form-inline" method="POST" id="bang1">
+
+<!-- NOTI -->
+ {% for i in range(list_noti|length) %}
+		<button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+	 		<span style="font-size:1.2vh;margin-left:-11vw">{{list_noti[i][2]}}</span>
+	 	</button>
+	 	<input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+	 	<input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+	 	<input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+{% endfor %}	
+<!-- WELCOME -->
+	<div style="width:65vw;margin:0 auto;margin-top:1vh;margin-left:17.5vw;height:5vh">
+		<div style="height:10vh;display:inline-block;width:19.5vw;"></div>
+		<div style="height:10vh;display:inline-block;width:32.5vw;margin-left:12.675vw;"></div>
+	</div>
+<!-- {{task_assigned}} -->
+<!-- {{task_assigned_notfinish|length}} -->
+<!-- COUNT -->
+{% if session['username'] in ['tult2','phunq','namht3'] %}
+<div style="color: black;font-size: 20px;position: absolute;">{{last_time}}{{last_user}}</div>
+{% endif %}
+<div style="background-image:url(static/images/map7.png); background-size: 100% 100%;width:65vw;margin:0 auto; height:21vh">
+
+		<div style="" class="total_task_parent">
+
+			<div style="" class="total_task"> <span style="font-size:280%" id="task_myself">0</span> công việc tự thực hiện </div>
+			
+			<div style="" class="total_task_detail">
+			{% if task_myself_finish|length == 0 %}
+			Bạn chưa hoàn thành công việc nào.<br><br> 
+			{% else %}
+			<span id="task_myself_finish">0</span> công việc đã hoàn thành <br> <span id="task_myself_notfinish">0</span> công việc chưa hoàn thành. 
+			{% endif %}
+			</div>
+		</div><!-- 
+	--><div style="" class="total_task_parent">
+			<div style="" class="total_task"><span style="font-size:280%" id="task_assigned">0</span> công việc được giao</div>
+			
+			<div style="" class="total_task_detail">
+
+			{% if task_assigned_finish|length == 0 %}
+				Chưa hoàn thành công việc nào.<br><br> 
+			{% else %}
+				<span id="task_assigned_finish">0</span> công việc đã hoàn thành, 
+				{% if task_assigned_finish_y|length != 0 %}
+				trong đó có <span id="task_assigned_finish_y">0</span> hoàn thành quá hạn
+				{% endif %}
+
+				<br> <span id="task_assigned_notfinish">0</span> công việc chưa hoàn thành. 
+			{% endif %}
+			</div>
+
+		</div>
+		<!--  -->
+		
+	</div>
+	<div style="margin-bottom:1vh;" class="my_title">Những công việc chưa hoàn thành</div>
+	<!-- <hr width="65%" style="margin:0 auto;border-top:2px solid #901e1d;margin-bottom:1vh"> -->
+	<!-- TABLE -->
+	<div style="vertical-align:top;font-size:85%;width:65vw;margin:0 auto;">
+			<div style="width:32.5vw;border-right:1px dashed #4d4d4d;;height:20vh" class="table_task_notfinish">
+					<table style="width:100%;">
+						<tbody>
+						{% if task_myself_notfinish == [] %}
+							<tr>
+								<td>Đã hoàn thành các công việc tự thực hiện.</td>
+							</tr>
+						{% endif %}
+						{% for i in task_myself_notfinish %}
+			                <tr style="">
+		 	                    <td  style="min-width:15vw;max-width: 15vw;padding-left:0">
+			                    	<button type="submit" name="go_task" value="{{i[0]}}" style="">{{i[1]}}</button>
+			                    </td>
+			                    <!-- <td style="min-width:2vw;max-width: 2vw">&nbsp;</td> -->
+			                    <td style="min-width:11vw;max-width: 11vw;text-align:right;">{{i[16]}}</td>
+			                    <td style="min-width:5vw;max-width: 5vw;text-align:right;padding-right:15px">{{i[6]}}</td>
+		 	                </tr>
+			         	{% endfor %}			         	
+						</tbody>
+					</table>
+			</div><!-- 
+		 --><div style="width:32.5vw;padding-left:1vw;height:20vh" class="table_task_notfinish">
+		 			<table style="">	
+		 				<tbody>
+		 				{% if task_assigned_notfinish == [] %}
+		 					<tr>
+		 						<td>Đã hoàn thành các công việc được giao.</td>
+		 					</tr>
+		 				{% endif %}
+		 				{% for i in task_assigned_notfinish %}
+		 	                <tr style="">
+		 	                    <td  style="min-width:13.5vw;max-width: 13.5vw;padding-left:0">
+			                    	<button type="submit" name="go_task" value="{{i[0]}}" style="">{{i[1]}}</button>
+			                    </td>
+			                    <td style="min-width:11vw;max-width: 11vw;text-align:right;">{{i[16]}}</td>
+			                    <td style="min-width:4.75vw;max-width: 4.75vw;text-align:right;">{{i[6]}}</td>
+		 	                </tr>
+		 	         	{% endfor %}
+		 				</tbody>
+		 			</table>
+			</div>
+			
+			
+
+</div>
+
+<!-- PROGRESS BAR -->
+<div style="color:black" class="my_title">Tỷ lệ thời gian thực hiện</div>
+<!-- <hr width="65%" style="margin:0 auto;border-top:2px solid #901e1d;margin-bottom:1vh"> -->
+	<div style="width:65vw;margin:0 auto;margin-top:1vh;padding:0;">
+		<div id="progress_bar" style="display:inline-block;width:48.75vw;background-color:#262626">
+		  	<div id="bar" style="height:2vh;font-size:1.2vh">0%</div>
+		</div><!-- 
+	 --><div style="display:inline-block;width:16.25vw;text-align:right;font-size:1.8vh;color:black">
+		  	<span id="total_time" style="color:#901e1d">0</span><span style="color:#901e1d">h</span>/{{total_time_full|int}}h
+		</div>
+	</div>
+
+{% if list_phan_bo_type == [] %}
+	{% set list_phan_bo_type = [['Giám sát,nhận diện, cảnh báo',0],['Thẩm định,phê duyệt,phân luồng',0],['Vận hành Hội đồng, Ủy ban',0],['Cải tiến hệ thống, mô hình, quy trình',0],['Xây dựng kiểm soát Budget',0]] %}
+{% endif %}
+
+{% if list_phan_bo_type_strategy == [] %}
+	{% set list_phan_bo_type_strategy = [['Dữ liệu',0],['Vận hành',0],['Nhân sự',0],['Quy trình',0],['Văn hóa',0]] %}
+{% endif %}
+
+</form>
+</div>
+
+<script type="text/javascript">
+{% set percen_time = total_time/total_time_full %}
+	    var bar = document.getElementById("bar");      
+	    var count_bar = 0;  
+	    var run_time = 1200;
+	    var loop_bar = setInterval(func_bar, run_time/{{percen_time*100}});    
+	    function func_bar() {
+	        if (count_bar >= {{percen_time*100}}) {
+	            clearInterval(loop_bar);
+	        } else {
+	            count_bar++; 
+	            bar.style.width = count_bar + '%'; 
+	            bar.innerHTML = count_bar * 1 + '%';
+	        }
+	    }
+
+	    var category_bar1 = document.getElementById("category_bar1");      
+	    var count_category_bar1 = 0;  
+	    var run_time = 1200;
+	    var loop_category_bar1 = setInterval(func_category_bar1, run_time/80);    
+	    function func_category_bar1() {
+	        if (count_category_bar1 >= 80) {
+	            clearInterval(loop_category_bar1);
+	        } else {
+	            count_category_bar1++; 
+	            category_bar1.style.width = count_category_bar1 + '%'; 
+	            category_bar1.innerHTML = count_category_bar1 * 1 + '%';
+	        }
+	    }
+
+
+	    var number = document.getElementById("total_time");
+	    var count_number = 0;
+	    var loop_number = setInterval(func_number, run_time/{{total_time}});
+	    function func_number() {
+	        if (count_number >= {{total_time}}) {
+	            clearInterval(loop_number);
+	        } else {
+	            count_number += 1; 
+	            number.innerHTML = count_number;
+	        }
+		}
+
+		var category_content_percent = document.getElementById("category_content_percent");
+	    var count_category_content_percent = 0;
+	    var loop_category_content_percent = setInterval(func_category_content_percent, run_time/80);
+	    function func_category_content_percent() {
+	        if (count_category_content_percent >= 80) {
+	            clearInterval(loop_category_content_percent);
+	        } else {
+	            count_category_content_percent += 1; 
+	            category_content_percent.innerHTML = count_category_content_percent;
+	        }
+		}
+
+		var task = document.getElementById("task_assigned"); 
+		var count_task = 0;
+		var loop_task = setInterval(total_task_assigned, run_time/{{task_assigned|length}});
+		function total_task_assigned() {
+	        if (count_task >= {{task_assigned|length}}) {
+	            clearInterval(loop_task);
+	        } else {
+	            count_task += 1; 
+	            task.innerHTML = count_task;
+	        }
+		}
+		var task_myself = document.getElementById("task_myself"); 
+		var count_task_myself = 0;
+		var loop_task_myself = setInterval(total_task_myself, run_time/{{task_myself|length}});
+		function total_task_myself() {
+	        if (count_task_myself >= {{task_myself|length}}) {
+	            clearInterval(loop_task_myself);
+	        } else {
+	            count_task_myself += 1; 
+	            task_myself.innerHTML = count_task_myself;
+	        }
+		}
+
+		var task_myself_finish = document.getElementById("task_myself_finish"); 
+		var count_task_myself_finish = 0;
+		var loop_task_myself_finish = setInterval(total_task_myself_finish, run_time/{{task_myself_finish|length}});
+		function total_task_myself_finish() {
+	        if (count_task_myself_finish >= {{task_myself_finish|length}}) {
+	            clearInterval(loop_task_myself_finish);
+	        } else {
+	            count_task_myself_finish += 1; 
+	            task_myself_finish.innerHTML = count_task_myself_finish;
+	        }
+		}
+		var task_myself_notfinish = document.getElementById("task_myself_notfinish"); 
+		var count_task_myself_notfinish = 0;
+		var loop_task_myself_notfinish = setInterval(total_task_myself_notfinish, run_time/{{task_myself_notfinish|length}});
+		function total_task_myself_notfinish() {
+	        if (count_task_myself_notfinish >= {{task_myself_notfinish|length}}) {
+	            clearInterval(loop_task_myself_notfinish);
+	        } else {
+	            count_task_myself_notfinish += 1; 
+	            task_myself_notfinish.innerHTML = count_task_myself_notfinish;
+	        }
+		}
+		var task_assigned_finish = document.getElementById("task_assigned_finish"); 
+		var count_task_assigned_finish = 0;
+		var loop_task_assigned_finish = setInterval(total_task_assigned_finish, run_time/{{task_assigned_finish|length}});
+		function total_task_assigned_finish() {
+	        if (count_task_assigned_finish >= {{task_assigned_finish|length}}) {
+	            clearInterval(loop_task_assigned_finish);
+	        } else {
+	            count_task_assigned_finish += 1; 
+	            task_assigned_finish.innerHTML = count_task_assigned_finish;
+	        }
+		}
+		var task_assigned_finish_y = document.getElementById("task_assigned_finish_y"); 
+		var count_task_assigned_finish_y = 0;
+		var loop_task_assigned_finish_y = setInterval(total_task_assigned_finish_y, run_time/{{task_assigned_finish_y|length}});
+		function total_task_assigned_finish_y() {
+	        if (count_task_assigned_finish_y >= {{task_assigned_finish_y|length}}) {
+	            clearInterval(loop_task_assigned_finish_y);
+	        } else {
+	            count_task_assigned_finish_y += 1; 
+	            task_assigned_finish_y.innerHTML = count_task_assigned_finish_y;
+	        }
+		}
+		var task_assigned_notfinish = document.getElementById("task_assigned_notfinish"); 
+		var count_task_assigned_notfinish = 0;
+		var loop_task_assigned_notfinish = setInterval(total_task_assigned_notfinish, run_time/{{task_assigned_notfinish|length}});
+		function total_task_assigned_notfinish() {
+	        if (count_task_assigned_notfinish >= {{task_assigned_notfinish|length}}) {
+	            clearInterval(loop_task_assigned_notfinish);
+	        } else {
+	            count_task_assigned_notfinish += 1; 
+	            task_assigned_notfinish.innerHTML = count_task_assigned_notfinish;
+	        }
+		}
+</script>
+{% endblock %}

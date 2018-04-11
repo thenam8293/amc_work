@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quản lý thông tin cá nhân</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="static/js/jquery-3.2.1.js"></script>
+        <link rel="stylesheet" href="static/css/bootstrap.min.css">
+        <style type="text/css">
+            body {background-color: #f2f2f2}
+            .base {margin-bottom: 5vh;margin-top: 3vh}
+            tr.ds_user:hover, tr.other_user:hover {background-color: #f2f2f2}
+            td {padding: 10px}
+            ul {list-style-type: none}
+            .img {border-radius: 100%;height: 2.5em;width: 2.5em}
+            .img_large {border-radius: 100%;height: 5em;width: 5em;vertical-align: middle;text-align: center;line-height: 75px;background-color: #901e1d;color: white;font-weight: bold}
+            .giant_div {margin-top: 20vh !important;padding: 10px;margin: auto; border:1px solid lightgrey;border-radius: 6px;width:35%;background-color: #ffffff;margin-bottom: 20vh !important;height: 600px}
+            #login,#tennguoidung {margin-bottom: 2vh }
+            .name {font-weight: normal;font-size: 110%}
+            .title {font-size: 140%;font-weight: bold;text-align: left;}
+            .form-control {width: 70%}
+            .email {font-size: 95%}
+            /*.giant_div {height: 65vh}*/
+            #xoay {transform: rotate(45deg);}
+
+        </style>
+        <style type="text/css">
+            .sk-cube-grid {
+              width: 100px;
+              height: 100px;
+              margin: 100px auto;
+            }
+
+            .sk-cube-grid .sk-cube {
+              width: 33%;
+              height: 33%;
+              background-color: #cc0000;
+              float: left;
+              -webkit-animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out;
+                      animation: sk-cubeGridScaleDelay 1.3s infinite ease-in-out; 
+            }
+            .sk-cube-grid .sk-cube1 {
+              -webkit-animation-delay: 0.2s;
+                      animation-delay: 0.2s; background-color: transparent;}
+            .sk-cube-grid .sk-cube2 {
+              -webkit-animation-delay: 0.3s;
+                      animation-delay: 0.3s; }
+            .sk-cube-grid .sk-cube3 {
+              -webkit-animation-delay: 0.4s;
+                      animation-delay: 0.4s; }
+            .sk-cube-grid .sk-cube4 {
+              -webkit-animation-delay: 0.1s;
+                      animation-delay: 0.1s; }
+            .sk-cube-grid .sk-cube5 {
+              -webkit-animation-delay: 0.2s;
+                      animation-delay: 0.2s; background-color: transparent;}
+            .sk-cube-grid .sk-cube6 {
+              -webkit-animation-delay: 0.3s;
+                      animation-delay: 0.3s; }
+            .sk-cube-grid .sk-cube7 {
+              -webkit-animation-delay: 0s;
+                      animation-delay: 0s; }
+            .sk-cube-grid .sk-cube8 {
+              -webkit-animation-delay: 0.1s;
+                      animation-delay: 0.1s;}
+            .sk-cube-grid .sk-cube9 {
+              -webkit-animation-delay: 0.2s;
+                      animation-delay: 0.2s; background-color: transparent;}
+
+            @-webkit-keyframes sk-cubeGridScaleDelay {
+              0%, 70%, 100% {
+                -webkit-transform: scale3D(1, 1, 1);
+                        transform: scale3D(1, 1, 1);
+              } 35% {
+                -webkit-transform: scale3D(0, 0, 1);
+                        transform: scale3D(0, 0, 1); 
+              }
+            }
+
+            @keyframes sk-cubeGridScaleDelay {
+              0%, 70%, 100% {
+                -webkit-transform: scale3D(1, 1, 1);
+                        transform: scale3D(1, 1, 1);
+              } 35% {
+                -webkit-transform: scale3D(0, 0, 1);
+                        transform: scale3D(0, 0, 1);
+              } 
+            }
+        </style>
+        <style type="text/css">
+            .cssload-container *, .cssload-container *:before, .cssload-container *:after{
+                box-sizing: border-box;
+                    -o-box-sizing: border-box;
+                    -ms-box-sizing: border-box;
+                    -webkit-box-sizing: border-box;
+                    -moz-box-sizing: border-box;
+            }
+
+            .cssload-container {
+                margin-top: 1vh;
+                /*margin: 49px auto;*/
+                width: auto;
+                height: auto;
+            }
+            .cssload-container > div {
+                float: left;
+                background: #cc0000;
+                height: 2px;
+                width: 13.6px;
+                margin-right: 1px;
+                display: inline-block;
+            }
+
+            .cssload-container .cssload-shaft1 {
+                animation-delay: 0.06s;
+                    -o-animation-delay: 0.06s;
+                    -ms-animation-delay: 0.06s;
+                    -webkit-animation-delay: 0.06s;
+                    -moz-animation-delay: 0.06s;
+            }
+            .cssload-container .cssload-shaft2 {
+                animation-delay: 0.12s;
+                    -o-animation-delay: 0.12s;
+                    -ms-animation-delay: 0.12s;
+                    -webkit-animation-delay: 0.12s;
+                    -moz-animation-delay: 0.12s;
+            }
+            .cssload-container .cssload-shaft3 {
+                animation-delay: 0.17s;
+                    -o-animation-delay: 0.17s;
+                    -ms-animation-delay: 0.17s;
+                    -webkit-animation-delay: 0.17s;
+                    -moz-animation-delay: 0.17s;
+            }
+            .cssload-container .cssload-shaft4 {
+                animation-delay: 0.23s;
+                    -o-animation-delay: 0.23s;
+                    -ms-animation-delay: 0.23s;
+                    -webkit-animation-delay: 0.23s;
+                    -moz-animation-delay: 0.23s;
+            }
+            .cssload-container .cssload-shaft5 {
+                animation-delay: 0.29s;
+                    -o-animation-delay: 0.29s;
+                    -ms-animation-delay: 0.29s;
+                    -webkit-animation-delay: 0.29s;
+                    -moz-animation-delay: 0.29s;
+            }
+            .cssload-container .cssload-shaft6 {
+                animation-delay: 0.35s;
+                    -o-animation-delay: 0.35s;
+                    -ms-animation-delay: 0.35s;
+                    -webkit-animation-delay: 0.35s;
+                    -moz-animation-delay: 0.35s;
+            }
+            .cssload-container .cssload-shaft7 {
+                animation-delay: 0.4s;
+                    -o-animation-delay: 0.4s;
+                    -ms-animation-delay: 0.4s;
+                    -webkit-animation-delay: 0.4s;
+                    -moz-animation-delay: 0.4s;
+            }
+            .cssload-container .cssload-shaft8 {
+                animation-delay: 0.46s;
+                    -o-animation-delay: 0.46s;
+                    -ms-animation-delay: 0.46s;
+                    -webkit-animation-delay: 0.46s;
+                    -moz-animation-delay: 0.46s;
+            }
+            .cssload-container .cssload-shaft9 {
+                animation-delay: 0.52s;
+                    -o-animation-delay: 0.52s;
+                    -ms-animation-delay: 0.52s;
+                    -webkit-animation-delay: 0.52s;
+                    -moz-animation-delay: 0.52s;
+            }
+            .cssload-container .cssload-shaft10 {
+                animation-delay: 0.58s;
+                    -o-animation-delay: 0.58s;
+                    -ms-animation-delay: 0.58s;
+                    -webkit-animation-delay: 0.58s;
+                    -moz-animation-delay: 0.58s;
+            }
+            .cssload-container .cssload-shaft11 {
+                animation-delay: 0.64s;
+                    -o-animation-delay: 0.64s;
+                    -ms-animation-delay: 0.64s;
+                    -webkit-animation-delay: 0.64s;
+                    -moz-animation-delay: 0.64s;
+            }
+            .cssload-container .cssload-shaft12 {
+                animation-delay: 0.70s;
+                    -o-animation-delay: 0.70s;
+                    -ms-animation-delay: 0.70s;
+                    -webkit-animation-delay: 0.70s;
+                    -moz-animation-delay: 0.70s;
+            }
+            .cssload-container .cssload-shaft13 {
+                animation-delay: 0.76s;
+                    -o-animation-delay: 0.76s;
+                    -ms-animation-delay: 0.76s;
+                    -webkit-animation-delay: 0.76s;
+                    -moz-animation-delay: 0.76s;
+            }
+            .cssload-container .cssload-shaft14 {
+                animation-delay: 0.82s;
+                    -o-animation-delay: 0.82s;
+                    -ms-animation-delay: 0.82s;
+                    -webkit-animation-delay: 0.82s;
+                    -moz-animation-delay: 0.82s;
+            }
+            .cssload-container .cssload-shaft15 {
+                animation-delay: 0.88s;
+                    -o-animation-delay: 0.88s;
+                    -ms-animation-delay: 0.88s;
+                    -webkit-animation-delay: 0.88s;
+                    -moz-animation-delay: 0.88s;
+            }
+            .cssload-container .cssload-shaft16 {
+                animation-delay: 0.94s;
+                    -o-animation-delay: 0.94s;
+                    -ms-animation-delay: 0.94s;
+                    -webkit-animation-delay: 0.94s;
+                    -moz-animation-delay: 0.94s;
+            }
+            .cssload-container .cssload-shaft17 {
+                animation-delay: 1s;
+                    -o-animation-delay: 1s;
+                    -ms-animation-delay: 1s;
+                    -webkit-animation-delay: 1s;
+                    -moz-animation-delay: 1s;
+            }
+            .cssload-container .cssload-shaft18 {
+                animation-delay: 1.06s;
+                    -o-animation-delay: 1.06s;
+                    -ms-animation-delay: 1.06s;
+                    -webkit-animation-delay: 1.06s;
+                    -moz-animation-delay: 1.06s;
+            }
+            .cssload-container .cssload-shaft19 {
+                animation-delay: 1.12s;
+                    -o-animation-delay: 1.12s;
+                    -ms-animation-delay: 1.12s;
+                    -webkit-animation-delay: 1.12s;
+                    -moz-animation-delay: 1.12s;
+            }
+             .cssload-container .cssload-shaft20 {
+                animation-delay: 1.18s;
+                    -o-animation-delay: 1.18s;
+                    -ms-animation-delay: 1.18s;
+                    -webkit-animation-delay: 1.18s;
+                    -moz-animation-delay: 1.18s;
+            }
+
+            .cssload-container {
+                width: auto;
+            }
+            .cssload-container > div {
+                height: 1.5px;
+                margin-right: 0;
+                animation: cssload-wave 1.15s infinite ease-in-out;
+                    -o-animation: cssload-wave 1.15s infinite ease-in-out;
+                    -ms-animation: cssload-wave 1.15s infinite ease-in-out;
+                    -webkit-animation: cssload-wave 1.15s infinite ease-in-out;
+                    -moz-animation: cssload-wave 1.15s infinite ease-in-out;
+            }
+
+
+
+            @keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    transform: translateX"("-10px")";
+                }
+            }
+
+            @-o-keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    -o-transform: translateX"("-10px")";
+                }
+            }
+
+            @-ms-keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    -ms-transform: translateX"("-10px")";
+                }
+            }
+
+            @-webkit-keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    -webkit-transform: translateX"("-10px")";
+                }
+            }
+
+            @-moz-keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    -moz-transform: translateX"("-10px")";
+                }
+            }
+        </style>
+        <script type="text/javascript">
+            $(document).keydown(function(event) {
+            if (event.ctrlKey==true && (event.which == '61' || event.which == '107' || event.which == '173' || event.which == '109'  || event.which == '187'  || event.which == '189'  ) ) {
+                    event.preventDefault();
+                 }
+                // 107 Num Key  +
+                // 109 Num Key  -
+                // 173 Min Key  hyphen/underscor Hey
+                // 61 Plus key  +/= key
+            });
+
+            $(window).bind('mousewheel DOMMouseScroll', function (event) {
+                   if (event.ctrlKey == true) {
+                   event.preventDefault();
+                   }
+            });
+        </script>
+    </head>
+    <body>
+    <form class="form-inline" method="POST" id="bang1" id="form1">
+        <form>
+            <div class="giant_div">
+                <!-- Nhap Password -->
+                <div class="w3-display-container mySlides">
+                    <center>
+                        <div class="base">
+                            <div id="tennguoidung">
+                                <div style="font-weight: bold; color:#47484a;font-size: 140%;margin-bottom: 1vh">Automatic Authentication <span style="color:  #cc0000">Gateway</span></div>
+                                <div class="cssload-container" style="display: table-cell;margin: auto">
+                                    <div class="cssload-shaft1"></div>
+                                    <div class="cssload-shaft2"></div>
+                                    <div class="cssload-shaft3"></div>
+                                    <div class="cssload-shaft4"></div>
+                                    <div class="cssload-shaft5"></div>
+                                    <div class="cssload-shaft6"></div>
+                                    <div class="cssload-shaft7"></div>
+                                    <div class="cssload-shaft8"></div>
+                                    <div class="cssload-shaft9"></div>
+                                    <div class="cssload-shaft10"></div>
+                                    <div class="cssload-shaft11"></div>
+                                    <div class="cssload-shaft12"></div>
+                                    <div class="cssload-shaft13"></div>
+                                    <div class="cssload-shaft14"></div>
+                                    <div class="cssload-shaft15"></div>
+                                    <div class="cssload-shaft16"></div>
+                                    <div class="cssload-shaft17"></div>
+                                    <div class="cssload-shaft18"></div>
+                                    <div class="cssload-shaft19"></div>
+                                    <div class="cssload-shaft20"></div>
+                                </div>
+                            </div>
+                            <div id="email">
+                                <div style="margin-bottom: 2vh"><span class="title" style="color: black;font-weight: normal;font-size: 19px;font-family:'Roboto' ">Welcome back</span></div>
+
+                                    <div><span class="title" style="color:black;">{{user_info[-2]}}</span></div>
+                                <!-- <div class="" id="" style="font-size: 40px;height: 75px;width: 75px;padding-bottom: 10vh"><img src="static/images/Picture1.png" width="75" height="75"></div> -->
+                            </div>
+                            <div id="form2">
+                                <div id="form_img1">
+                                    <!-- <div class="img_large" id="avatar" style="font-size: 40px;height: 75px;width: 75px;"></div> -->
+                                    <div class="sk-cube-grid" id="xoay">
+                                        <div class="sk-cube sk-cube1"></div>
+                                        <div class="sk-cube sk-cube2"></div>
+                                        <div class="sk-cube sk-cube3"></div>
+                                        <div class="sk-cube sk-cube4"></div>
+                                        <div class="sk-cube sk-cube5"></div>
+                                        <div class="sk-cube sk-cube6"></div>
+                                        <div class="sk-cube sk-cube7"></div>
+                                        <div class="sk-cube sk-cube8"></div>
+                                        <div class="sk-cube sk-cube9"></div>
+                                    </div>
+                                    <div style="margin-top: 20vh;">
+                                        <span class="title" id="say_hi" style="font-size:80%"><span style="color: darkgrey">AAG established by </span><span style="color: grey">AOS</span> </span>
+                                    </div>
+                                    <button type="submit" name="redirect_station" id="redirect" value="123"  style="display: none"></button>
+                                </div>
+                            </div>
+                        </div>
+                    </center>
+                </div>
+                <!-- End Nhap Password -->
+            </div>
+        </form>
+            <script type="text/javascript">
+                    setTimeout(function(){
+                        $("#redirect").click();
+                        }, 
+                        2460);
+            </script>
+        </script>
+    </body>
+</html>

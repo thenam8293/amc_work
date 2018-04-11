@@ -1,0 +1,862 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<link href="/static/content/bootstrap-select2.min.css" rel="stylesheet" />
+<script src="/static/scripts/bootstrap-select2.min.js"></script>
+	
+	<script type="text/javascript">
+		var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+	</script>
+	<style>
+
+ 	ul[class^='select2-results__options'] {background-color: transparent;}
+ 	ul[class^='select2-selection__rendered'] {background-color: transparent;}
+
+ 	li[class^='select2-results'] {background-color: transparent;color: black;}
+ 	li[class^='select2-selection__choice'] {background-color: #cccccc !important;color: black;font-size: 12px;}
+ 	li[class^='select2-search'] {color: black;font-size: 12px;}
+ 	input[class^='select2-search__field'] {margin-left: 9px;font-size: 15px !important;}
+ 	.select2 {border-radius: 0 !important;}
+ 	span[class^='select2-selection'] {border-radius: 0 !important;}
+	 .button_color{border: none;height:15px;width:15px;border-radius: 4px;margin-right: 0.5vh;margin-top: 1vh;float:right;}
+	 .calendar {height: 3vh;width: 3vw;font-size: 10px;border: none;outline: none;background-color: transparent;}
+	 .li_dien> a#bar_mng {
+        background-color:#901E1D !important;
+        font-weight: bold !important;
+        color: white !important;
+        border-bottom: 3px solid #901E1D !important;
+        }
+     div.arrow {display: none !important;}
+     .btn_add_new_task {margin-left: 4vw;margin-top: 3vh;border: none;text-decoration: none;font-size: 17px}
+     .div_inside {width: 100%;overflow: hidden;color:black;font-size:10px;text-overflow: ellipsis;margin: 0;}
+     .popover{margin-bottom: 5vh}
+	</style>
+	
+	<script type="text/javascript">
+		
+		function back() {
+		    document.getElementById(back_id_end).click();
+		    var i1 = parseInt(back_id_end.substring(2,back_id_end.length));
+		    var i2 = parseInt(back_id_start.substring(2,back_id_start.length));
+		    for(i2; i2<i1+1 ;i2++){
+				document.getElementById(i2).style.background = '#666666';
+				document.getElementById(i2).disabled = false;
+			};
+			for(j=0;j<list_click_popover.length;j++){
+				document.getElementById(list_click_popover[j]).disabled = false;
+			};
+			$(".selectexe").select2("destroy");
+			$(".select-2").select2("destroy");
+			
+
+			count_click_popover = 0;
+			list_click_popover = [];
+		 };
+	</script>
+
+	<style type="text/css">
+	/**{border:1px solid black;}*/
+
+	</style>
+	<div id="all" style="display:none;width:99.5vw;position:absolute">
+	<script type="text/javascript">
+	  $(function() {
+	    var submit_form = function(e) {
+	      $.getJSON($SCRIPT_ROOT + '/_noti_read_fake', {
+	      });
+	      return false;
+	    };
+	    $('button#noti_btn').bind('click', submit_form);
+	  });
+	 
+	</script>
+
+
+
+<!-- FORM CHINH -->
+<form novalidate="novalidate" class="form-inline" method="POST" id="bang1" >
+<!-- NOTI -->
+ {% for i in range(list_noti|length) %}
+<button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+	 		<span style="font-size:1.2vh;margin-left:-11vw">{{list_noti[i][2]}}</span>
+	 	</button>
+	 	
+	 	<input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+	 	<input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+	 	<input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+{% endfor %}
+<!-- START -->
+
+{{block_task}}
+
+{% set d = (day_selected|string).split(" ")[0] %}
+{% set day = d.split("-")[2] %}
+{% set month = d.split("-")[1] %}
+{% set year = d.split("-")[0] %}
+
+
+
+{% set d_now = (day_now|string).split(" ")[0] %}
+{% set day_now = d_now.split("-")[2] %}
+{% set month_now = d_now.split("-")[1] %}
+{% set year_now = d_now.split("-")[0] %}
+
+<!-- CALENDAR -->
+<div style="margin-top:0vh;width: 100%;">
+	<div style="margin-left:0;display:inline-block;width: 20vw;background-size:100% 100%"></div>
+	<div style="display:inline-block;float:right;margin-right: 5vw;">
+		<div style="width: 22vw;text-align: center;color: black;font-weight: bold;">
+		{{day}}/{{month}}/{{year}}
+		</div>
+	</div>		
+</div>
+<div style="margin-top:0vh;width: 100%;">
+	<div style="margin-left:0;display:inline-block;height: 17vh;width: 20vw;background-size:100% 100%"></div>
+	<div style="display:inline-block;float:right;margin-right: 4.8vw;" id="calendar">
+		<div style="width: 21.5vw;font-size: 0;" id="row_1">
+			<button type="button" style="height: 2vh;width: 2vw;font-size: 15px;border:  none;font-weight: bold;outline: none;background-color: transparent;" id="previous_month" class="glyphicon glyphicon-circle-arrow-left"></button>
+			<button type="button" style="height: 2vh;width: 4.5vw;font-size: 10px;border:  none;font-weight: bold;outline: none;background-color: transparent;" id=""></button>
+			<button type="button" style="height: 2vh;width: 8vw;font-size: 10px;border:  none;font-weight: bold;outline: none;background-color: transparent;" id="mmdd"></button>
+			<button type="submit" style="height: 2vh;width: 4.3vw;font-size: 10px;border:  none;font-weight: bold;outline: none;background-color: transparent;" id="to_day" name="select_day"  value="{{day_now}}/{{month_now}}/{{year_now}}" >To day</button>
+			<button type="button" style="height: 2vh;width: 2vw;font-size: 15px;border: none;font-weight: bold;outline: none;background-color: transparent;" id="next_month" class="glyphicon glyphicon-circle-arrow-right"></button>			
+		</div>
+		<div style="width: 21.5vw;font-size: 0;" id="row_2">
+			{% for i in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+				<button type="button" class="calendar">{{i}}</button>
+			{% endfor %}
+		</div>
+		<div style="width: 21.5vw;font-size: 0;" id="row_3"></div>
+	</div>		
+</div>
+
+
+
+
+<!-- SECOND HALF -->
+<div style="min-height:49.6vh;margin-top:6vh;">
+	<!-- REAL -->
+		<div style="margin:0 auto;font-size:0;margin-top:10vh;width:91.6071429%;margin-left:5%" >
+				{% for i in range(1,57) %}
+				<button class="color_time_bar" id="{{i}}" name="report{{i}}" type="button" onclick="f1(event);" style="width:1.75438596%;height:5px;border:none;padding:0; outline:none;">{{i}}</button>
+				{% endfor %}
+				<button id='57' name="report57" type="button" style="width:1.75438596%;height:5px;border:none;border-left:1px solid #666666;padding:0; outline:none;font-size:0;background-color: transparent;" disabled>1</button>
+		</div>
+	<!-- LONG CHIM -->
+		<div style="margin:0 auto;font-size:0;width:91.6071429%" >
+			{% for i in range(57) %}
+				<button id="cc{{i}}" class="trigger" data-placement="bottom" type="button" style="width:1.75438596%;border:none;padding:0;outline:none;background-color:transparent;visibility:hidden;">{{i}}</button>
+			{% endfor %}
+		<div class="select_report_task hide" style="" class="">
+		
+		<div id="input_giao_viec" name="input_giao_viec" style="" class="">
+				<select id="executer_task" name="Executer" class="selectexe form-control popover_height box_task_report content_sm" style="padding-left: 9px;" multiple>
+					{% for i in list_assignee %}
+		 				<option value="{{i[2]}}">{{i[1]}}</option>
+					{% endfor %}
+	 				
+				</select>
+				<select id="supporter_task" name="Supporter" class="select-2 form-control popover_height box_task_report content_sm" style="padding-left: 9px;" multiple>
+	 				{% for i in list_assignee %}
+	 					<option value="{{i[2]}}">{{i[1]}}</option>
+					{% endfor %}
+				</select>
+				
+		        <input class="form-control popover_height content_sm" id="task_name_t" type="text" name="Task_name" placeholder="Tên tài sản/Khách hàng/Công việc:" autocomplete="off">
+		        <select name="type_department" id="job_type_t" class="form-control popover_height box_task_report content_sm" style="padding-left: 9px ">
+		        	<option value="" disabled selected hidden>Loại công việc</option>
+			        {% for r in list_type_department %}
+			          <option value="{{r}}">{{r}}</option>
+			        {% endfor %}
+		        </select>
+		        
+		        <textarea class="form-control popover_height content_sm" style="max-height: 30vh;display: inline;" type="text" name="Description" placeholder="Mô tả chi tiết về công việc thực hiện"></textarea>
+
+		        <button type="submit" class="btn btn-default btn_edit_del_ok " style="padding-right:10px;padding-top:10px;font-weight:bold"" id="submit_task" name="submit" value="new_task_assignment" onclick="return checkForm_task(this);">Xác nhận</button>
+		        <button type="button" class="btn btn-default btn_edit_del_ok " style="padding-top:10px;font-weight:bold;" onclick="back()">Hủy</button>
+		    </div>
+
+		</div>
+
+	</div>
+	<!-- KHONG DC CHINH GI HET -->
+	<!-- RULES -->
+		<div style="margin:0 auto;font-size:0;width:91.6071429%;margin-left: 5%" >
+
+
+			{% for i in range(1,57) %}
+			{% if i%2 == 0 %}
+			<button type="button" disabled="" style="width:1.75438596%;height:0.6vh;border:none;border-left: 1px solid #666666;padding:0;outline:none;background-color:transparent;font-size:0">{{i}}</button>
+			{% endif %}
+			{% if i%2 == 1 %}
+			<button type="button" disabled="" style="width:1.75438596%;height:1vh;border:none;border-left: 1px solid black;padding:0;outline:none;background-color:transparent;font-size:0">{{i}}</button>
+			{% endif %}
+			{% endfor %}
+			
+			<button type="button" disabled="" style="width:1.75438596%;height:1vh;border:none;border-left: 1px solid black;padding:0;outline:none;background-color:transparent;font-size:0">0</button>
+		</div>
+	<!-- MOC THOI GIAN -->
+		<div style="width:{{90*15/14}}%;margin:0 auto;font-size:0;margin-top:0.5vh">
+			{% for i in list_moc_thoi_gian %}
+				<button type="button" disabled style="width:{{100/(list_moc_thoi_gian|length)}}%;height:2vh;font-size:10px;background-color:transparent;color:#262626;border: none;outline:none">
+					{{i}}
+				</button>
+			{% endfor %}
+		</div>
+
+	  <!-- TASK -->
+	<div id="div_t1"  style="display:block">
+		{% for k in range(block_task|length) %}
+		<div id="div_executer{{k}}" class="" style="font-size:0;margin:0;padding:0;">
+			<div id="{{content_task[k][0][7]}}">
+			<div style="display:inline-block;width:1.5%;"><label>&nbsp;</label></div>
+			<div style="display:none;width:16%;padding-right:1.5vw"><label class="content_sm" style="font-weight:bold;font-size:13px">
+			{% if block_task != [] %}
+				{{content_task[k][0][10]}}
+			{% endif %}
+			</label>
+			</div>
+			<div id="div_task_{{k}}" style="font-size:0;height:6vh;margin-left: 3.5vw;margin-top: 1.5vh;display:inline-block;vertical-align:bottom" class="width_floor">
+					  <input type="text" id="task_{{k}}_0" style="width:0.59523810%;display:none">
+					  {% for i in range(1,169) %}
+					  <input type="text" id="task_{{k}}_{{i}}"  style="width:0.59523810%;border:none;visibility: hidden;" disabled>
+					  {% endfor %}
+			  <!-- EDIT_TASK -->
+			  {% for j in range(block_task[k]|length) %}
+			  <div class="title_B_{{k}}_{{j}} hide" >
+			  	<label class=" popover_title title_sm" style="">Tên tài sản/Khách hàng/Công việc:</label><br>
+			  	<label class=" popover_title pop_tt_content content_sm" style=""> {{content_task[k][j][1]}}</label><br>
+			  	<label class=" popover_title title_sm" style="">Nội dung: </label><br>
+				<label class=" popover_title pop_tt_content content_sm" style="white-space: pre-wrap;"> {{content_task[k][j][4]}}</label><br>
+
+			  	<label class=" popover_title title_sm" >Người thực hiện:</label><br>
+			  	<label class=" popover_title pop_tt_content content_sm" >{{content_task[k][j][10]}}</label><br>
+			  	<label class=" popover_title title_sm" >Người hỗ trợ:</label><br>
+				<label class=" popover_title pop_tt_content content_sm" >{{content_task[k][j][12]|replace('|','; ')}}</label><br>
+				<label class=" popover_title title_sm" style="width:49%">Loại công việc: </label>
+				<label class=" popover_title title_sm" style="width:49%">Tỷ lệ hoàn thành: </label><br>
+				<label class=" popover_title pop_tt_content content_sm" style="width:49%"> {{content_task[k][j][20]}}</label>
+				<label class=" popover_title pop_tt_content content_sm" style="width:49%"> {{content_task[k][j][6]}}</label><br>
+
+			  </div>
+			  <div class="content_B_{{k}}_{{j}} hide" >
+					<div id="edit_task_B_{{k}}_{{j}}" name="edit_task_B_{{k}}_{{j}}" class="" style="display:none">
+					        <input class="content_sm form-control popover_height" type="text" name="Task_name{{content_task[k][j][0]}}" placeholder="Tên tài sản/Khách hàng/Công việc:" value="{{content_task[k][j][1]}}">
+					        <select style="padding-left:9px;" name="type_department{{content_task[k][j][0]}}" class="content_sm form-control popover_height box_task_report">
+					        	<option value="" disabled selected hidden>Loại công việc</option>
+						          {% for r in list_type_department %}
+						          <option value="{{r}}" {% if r == content_task[k][j][20] %} selected {% endif %}>{{r}}</option>
+						          {% endfor %}
+					        </select>
+					       
+					        <textarea class="content_sm form-control popover_height" style="max-height: 30vh;display: inline;" type="text" name="Content{{content_task[k][j][0]}}" placeholder="Mô tả chi tiết về công việc thực hiện">{{content_task[k][j][4]}}</textarea>
+					      
+					        <select name="Executer{{content_task[k][j][0]}}" class="content_sm form-control popover_height box_task_report" style="padding-left: 9px">
+				 				<option selected disabled>Người thực hiện</option>
+								{% for i in range(list_assignee|length) %}
+									<option value="{{list_assignee[i][2]}}" {% if content_task[k][j][7] == list_assignee[i][0] %} selected {% endif %} >{{list_assignee[i][1]}}</option>
+								{% endfor %}
+							</select>
+					    	<select name="Supporter_x_{{content_task[k][j][0]}}" class="select-3 content_sm form-control popover_height box_task_report" style="width: 100%" id="nguoi_ho_tro_{{k}}_{{j}}" multiple>
+								{% for i in range(list_assignee|length) %}
+									<option value="{{list_assignee[i][2]}}">{{list_assignee[i][1]}}</option>
+								{% endfor %}
+							</select>
+					        <br>
+					        <button type="submit" class="btn btn-default btn_edit_del_ok " style="padding-right:10px;padding-top:10px;outline:none;font-weight:bold" id="ok" name="edit_task_OK" value="{{content_task[k][j][0]}}">Xác nhận</button>
+					        <button type="button" class="btn btn-default btn_edit_del_ok " style="padding-top:10px;font-weight:bold;" onclick="task_back_{{k}}_{{j}}()">Hủy</button>
+					      
+					    </div>
+					     <div id="btn_task_edit_{{k}}_{{j}}"> 
+						<button type="button" id="btn_edit_report_{{k}}_{{j}}" class="btn btn-default btn_edit_del_ok hide_edit_del" value="" style="padding-right:7px;font-weight:bold;" onclick="edit_task_B_{{k}}_{{j}}()">Sửa</button>
+						<button type="submit" name="delete_task" value="{{content_task[k][j][0]}}" id="btn_edit_report_del" style="font-weight:bold;" class="btn btn-default btn_edit_del_ok hide_edit_del">Xóa</button>
+						<button type="submit" class="btn btn-default btn_edit_del_ok" name="tracking" value="{{content_task[k][j][0]}}" style="padding-left:7px;font-weight:bold;">Chi tiết</button>
+						<!-- <div style="float: right;margin-top:-2.8vh"> -->
+						<button type="submit" name="green" value="{{content_task[k][j][0]}}" id="color_#6e4375" class="button_color B_{{k}}_{{j}}" style="background-color: #6e4375;"></button>
+						<button type="submit" name="orange" value="{{content_task[k][j][0]}}" id="color_#6fc7b0" class="button_color B_{{k}}_{{j}}" style="background-color: #6fc7b0"></button>
+						<button type="submit" name="blue" value="{{content_task[k][j][0]}}" id="color_#056cb9" class="button_color B_{{k}}_{{j}}" style="background-color: #056cb9;"></button>
+						<button type="submit" name="red" value="{{content_task[k][j][0]}}" id="color_#ff6600" class="button_color B_{{k}}_{{j}}" style="background-color: #ff6600;"></button>
+						<button type="submit" name="black" value="{{content_task[k][j][0]}}" id="color_#901d1e" class="button_color B_{{k}}_{{j}}" style="background-color: #901d1e"></button>
+						<input type="text" value="green" name="get_color_value{{content_task[k][j][0]}}" id="get_color_value" class="B_{{k}}_{{j}}" style="display: none;">
+						<!-- </div> -->
+
+						</div>
+					</div>
+				  {% endfor %}
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+
+<!-- FAKER -->
+	<input type="text" style="display:none" id="start1" name="time_start">
+	<input type="text" style="display:none" id="end1" name="time_end">
+	<button type="submit" style="display:none" id="btn_slot_day_selected" name="submit"></button>
+	<input type="text" style="display:none" id="btn_change_report"  name="btn_change_report" value="cv">
+</div>
+
+</form>
+</div>
+
+
+<!-- CALENDAR -->
+<script type="text/javascript">
+	var list_weekday = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+	var list_month = ['6','7','8','9','10','11','12','1','2','3','4','5','6','7','8','9','10','11','12'];
+	var list_3 = ['&nbsp;','&nbsp;'];
+	var list_4 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_5 = [];
+	var list_6 = ['&nbsp;','&nbsp;','&nbsp;'];
+	var list_7 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_8 = ['&nbsp;'];
+	var list_9 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_10 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_11 = ['&nbsp;','&nbsp;'];
+	var list_12 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_4_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_6_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_9_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_11_18 = ['&nbsp;','&nbsp;','&nbsp;'];
+	var list_2_18 = ['&nbsp;','&nbsp;','&nbsp;'];
+	var list_1_18 = [];
+	var list_3_18 = ['&nbsp;','&nbsp;','&nbsp;'];
+	var list_5_18 = ['&nbsp;'];
+	var list_7_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_8_18 = ['&nbsp;','&nbsp;'];
+	var list_10_18 = [];
+	var list_12_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+
+	{% for i in range(1,31) %}
+		list_4.push("{{i}}");
+		list_6.push("{{i}}");
+		list_9.push("{{i}}");
+		list_11.push("{{i}}");
+		list_4_18.push("{{i}}");
+		list_6_18.push("{{i}}");
+		list_9_18.push("{{i}}");
+		list_11_18.push("{{i}}");
+	{% endfor %}
+	{% for i in range(1,29) %}
+		list_2_18.push("{{i}}");
+	{% endfor %}	
+	{% for i in range(1,32) %}
+		list_3.push("{{i}}");
+		list_5.push("{{i}}");
+		list_7.push("{{i}}");
+		list_8.push("{{i}}");
+		list_10.push("{{i}}");
+		list_12.push("{{i}}");
+		list_1_18.push("{{i}}");
+		list_3_18.push("{{i}}");
+		list_5_18.push("{{i}}");
+		list_7_18.push("{{i}}");
+		list_8_18.push("{{i}}");
+		list_10_18.push("{{i}}");
+		list_12_18.push("{{i}}");
+	{% endfor %}
+	{% for i in range(11) %}
+		list_5.push('&nbsp;');
+		list_1_18.push('&nbsp;');
+		list_2_18.push('&nbsp;');
+		list_10_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(9) %}
+		list_3.push('&nbsp;');
+		list_6.push('&nbsp;');
+		list_8_18.push('&nbsp;');
+		list_11_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(6) %}
+		list_7.push('&nbsp;');
+		list_4_18.push('&nbsp;');
+		list_12_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(10) %}
+		list_8.push('&nbsp;');
+		list_5_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(8) %}
+		list_9.push('&nbsp;');
+		list_3_18.push('&nbsp;');
+		list_6_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(5) %}
+		list_10.push('&nbsp;');
+		list_7_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(10) %}
+		list_11.push('&nbsp;')
+	{% endfor %}
+	{% for i in range(7) %}
+		list_4.push('&nbsp;')
+		list_12.push('&nbsp;')
+		list_9_18.push('&nbsp;')
+	{% endfor %}
+
+	var list_day_in_month_2017 = [[],[],[],list_3,list_4,list_5,list_6,list_7, list_8 ,list_9 ,list_10 ,list_11 ,list_12]
+
+	var list_day_in_month_2018 = [[],list_1_18,list_2_18,list_3_18,list_4_18,list_5_18,list_6_18,list_7_18,list_8_18,list_9_18,list_10_18,list_11_18,list_12_18]
+	var list_month = []
+	var today = new Date()
+	var dd = today.getDate()
+	var mm = today.getMonth()+1
+	var yyyy = today.getFullYear()
+	var month_selected
+	var year_selected
+
+	$("#mmdd").text({{month}}+'/'+{{year}})
+	if({{year}} == 2017) {
+		list_day_in_month = list_day_in_month_2017
+	}
+	else if({{year}} == 2018) {
+		list_day_in_month = list_day_in_month_2018
+	}
+
+	$.each(list_day_in_month[{{month}}],function(i,r) {
+		if(r == dd && {{month}} == mm) {
+			$("#row_3").append('<button type="submit" style="background-color:#901d1e;color:white;border:1px solid #901d1e;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+		}
+		else if(r == {{day}}){
+			$("#row_3").append('<button type="submit" style="border:1px solid black;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+		}
+		else if(r == '&nbsp;') {
+			$("#row_3").append('<button type="button" class="calendar" disabled>'+r+'</button>')
+		}
+		else{
+			$("#row_3").append('<button type="submit" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+		}
+	});
+	
+	$("#next_month").click(function() {
+		month_selected = $("#mmdd").text().split("/")[0]
+		year_selected = $("#mmdd").text().split("/")[1]
+		// alert(year_selected)
+		if(year_selected == 2017){
+			if(parseInt(month_selected) < 12){
+				yyyy = 2017
+				$("#mmdd").text(parseInt(month_selected)+1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2017			
+			}else if(parseInt(month_selected) == 12) {
+				month_selected = 0
+				yyyy = 2018
+				$("#mmdd").text(parseInt(month_selected)+1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2018			
+			}
+
+		}else if(year_selected == 2018) {
+			yyyy = 2018
+			if(parseInt(month_selected) < 12){				
+				$("#mmdd").text(parseInt(month_selected)+1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2018		
+			}
+		}
+		$.each(list_day_in_month[parseInt(month_selected)+1],function(i,r) {
+			if(r == dd && parseInt(month_selected)+1 == mm) {
+				$("#row_3").append('<button type="submit" style="background-color:#901d1e;color:white;border:1px solid #901d1e;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+			}
+			else if(r == {{day}} && parseInt(month_selected)+1 == {{month}}){
+				$("#row_3").append('<button type="submit" style="border:1px solid black;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+			}
+			else if(r == '&nbsp;') {
+				$("#row_3").append('<button type="button" class="calendar" disabled>'+r+'</button>')
+			}
+			else {
+				$("#row_3").append('<button type="submit" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+			}			
+		})		
+
+	});
+	$("#previous_month").click(function() {
+		month_selected = $("#mmdd").text().split("/")[0]
+		year_selected = $("#mmdd").text().split("/")[1]
+		if(year_selected == 2017){
+			yyyy = 2017
+			if(parseInt(month_selected) > 1){
+				$("#mmdd").text(parseInt(month_selected)-1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2017		
+			}
+		}
+		else if(year_selected == 2018) {
+			
+			if(parseInt(month_selected) > 1) {
+				yyyy = 2018
+				$("#mmdd").text(parseInt(month_selected)-1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2018
+				
+			}else if(parseInt(month_selected) == 1) {
+				month_selected = 13
+				yyyy = 2017
+				$("#mmdd").text(parseInt(month_selected)-1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2017
+			}
+		}	
+
+		$.each(list_day_in_month[parseInt(month_selected)-1],function(i,r) {
+				if(r == dd && parseInt(month_selected)-1 == mm) {
+					$("#row_3").append('<button type="submit" style="background-color:#901d1e;color:white;border:1px solid #901d1e;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+				}
+				else if(r == {{day}} && parseInt(month_selected)-1 == {{month}}){
+					$("#row_3").append('<button type="submit" style="border:1px solid black;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+				}
+				else if(r == '&nbsp;') {
+					$("#row_3").append('<button type="button" class="calendar" disabled>'+r+'</button>')
+				}
+				else {
+					$("#row_3").append('<button type="submit" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+				}
+			})
+
+	});
+</script>
+
+
+
+<script type="text/javascript">
+	var count_click_popover = 0;
+	var list_click_popover = [];
+	var back_id_end;
+	var back_id_start;
+	var list_button = [];
+	{% for i in range(1,57) %}
+	list_button.push({{i}});
+	{% endfor %}
+	var list_select = [];
+	var x = 0;
+	function f1(event) {
+		var evt =  event.target.id || event.srcElement.id;
+		list_button[parseInt(evt)-1] = evt+"*";
+		for(i=0;i<= list_button.length;i++){
+			if(String(list_button[i])[String(list_button[i]).length-1] == '*'){
+				var a =document.getElementById(i+1);
+				a.style.background = 'white';
+				a.value = i+1;
+				list_button[i] = evt;
+				if(a.value != list_select[0]){
+				list_select.push(a.value);
+				x+=1;
+				};
+			};
+		};
+				
+				if(x%2 == 0){
+					j=parseInt(list_select[0]);
+					j2=parseInt(list_select[1]);
+					list_left = [];
+					list_right = [];
+					document.getElementById('start1').value = j;
+					document.getElementById('end1').value = j2 + 1;
+					for(r=j;r<j2+1;r++){
+						if(document.getElementById(r).disabled == true){
+							list_left.push(r);
+							break;
+						}
+					};
+					for(r=j2+1;r>j;r--){
+						if(document.getElementById(r).disabled == true){
+							list_right.push(r);
+							break;
+						}
+					};
+					if(parseInt(list_select[0]) > parseInt(a.value)){
+						alert('Start phai sau End');
+						document.getElementById(list_select[0]).style.background = '#666666';
+						document.getElementById(list_select[1]).style.background = '#666666';
+						list_select = [];	
+					}
+					else if(list_left[0] == null){
+						
+						
+						for(j; j<j2+1 ;j++){
+							document.getElementById(j).style.background = 'white';
+							document.getElementById(j).disabled = true;
+						};
+						back_id_end = 'cc'+list_select[1];
+						back_id_start = 'cc'+list_select[0];
+						document.getElementById('cc'+list_select[1]).click();
+						count_click_popover = 1;
+						
+						list_select = [];	
+					}
+					else {
+						alert('Khong duoc chon trong khoang nay');
+						document.getElementById(list_select[0]).style.background = '#666666';
+						document.getElementById(list_select[1]).style.background = '#666666';
+						document.getElementById(j2).disabled = false;
+						document.getElementById(j).disabled = false;
+						list_select = [];
+					};
+				};
+		// KHONG CHO MO 2 LAN
+		if(count_click_popover == 1){
+			for(j=1;j<=57;j++){
+				if(document.getElementById(j).disabled == false){
+					list_click_popover.push(j);
+					document.getElementById(j).disabled = true;
+						
+					}
+				}
+			}
+		};
+
+		$(document).ready(function(){
+		    $('[data-toggle="tooltip"]').tooltip();
+		});
+
+		$(document).ready(function(){
+		    $('[data-toggle="popover"]').popover();
+		});
+</script>
+<!-- PÔPOVER -->
+<script>
+// $(".select-2").select2();
+	 $('.trigger').popover({
+	    html: true,
+	    title: function () {
+	        return $(this).parent().find('.head').html();
+	    },
+	    content: function () {
+	    	return $(this).parent().find('.select_report_task').html();
+	    }
+	}).on('shown.bs.popover', function() {
+		$(".selectexe").select2({
+			placeholder: "Người thực hiện",
+			maximumSelectionLength: 1
+		});
+        $(".select-2").select2({
+        	placeholder: "Người phối hợp"
+        });
+    });
+
+
+</script>
+<!-- TASK -->
+<script type="text/javascript">
+	{% for k in range(block_task|length) %}
+		{% for j in range(block_task[k]|length) %}
+				{% for i in range(block_task[k][j][0]|int,block_task[k][j][1]|int) %}
+					try{document.getElementById("task_{{k}}_{{i}}").outerHTML="";}
+					catch(e){}
+				{% endfor %} 
+				var element = document.createElement("div");
+				element.style.display = 'inline-block';
+				element.style.width = "{{(block_task[k][j][1]|int-block_task[k][j][0]|int)*(100/168)}}%";
+
+				element.style.height = "65px";
+				element.id = 'task_{{k}}_{{block_task[k][j][1]|int-1}}';
+				  
+				  // element.style.borderRadius = '20px';
+				  // element.style.vertical-align = "middle";
+				element.style.borderTop = "5px solid {{content_task[k][j][-2]}}";
+				element.style.borderRight = '1px solid #d9d9d9';
+				element.style.paddingLeft = '0.2vw';
+			    // element.style.paddingTop = '0.2vw';
+			    element.style.paddingRight = '0.3vw';
+	  			// element.style.marginLeft= '3.5vw';
+				element.style.color = "#262626";
+				element.style.marginTop = "1vh";
+				element.style.outline = 'none';
+				element.style.textAlign = 'left';
+				// element.style.fontWeight = 'bold';
+				element.style.background = '#e6e6e6';
+				  // element.style.backgroundColor = 'rgba(158, 184, 184,0.5)' ; 
+				  // element.style.borderRadius = '10px';
+				element.className = 'B_{{k}}_{{j}}';
+				element.setAttribute("data-placement","bottom");
+			  	element.style.overflow = 'hidden';
+			  	element.style.whiteSpace = 'nowrap';
+			  	element.style.textOverflow = 'ellipsis';
+				element.innerHTML= 
+				'<p style="font-style:italic" class="B_{{k}}_{{j}} div_inside">Time: {% if content_task[k][j][15][5:-5] == content_task[k][j][16][5:-5] %}{{content_task[k][j][15][:-11]}} - {{content_task[k][j][16][:-11]}}{% else %}{{content_task[k][j][15]}} - {{content_task[k][j][16]}}{% endif %}</p>\
+				\
+				<p style="color:black;font-size:10px;font-weight:bold;float:left;display:inline-block;width:60%;overflow:hidden;text-overflow:ellipsis;margin:0" class="B_{{k}}_{{j}}">{{content_task[k][j][1]}}</p>\
+				\
+				<p style="color:black;font-size:10px;float:right;display:inline-block;width:39%;overflow:hidden;text-align:right;margin:0" class="B_{{k}}_{{j}}">{{(content_task[k][j][6])}}</p>\
+				\
+				<p class="B_{{k}}_{{j}} div_inside">{{content_task[k][j][4]|replace("\r\n"," ")|replace("\n"," ")}}</p>\
+				\
+				<p style= "font-style:italic" class="B_{{k}}_{{j}} div_inside">Assign to: {{content_task[k][j][10]}}</p>';
+				element.style.fontSize ='12px';
+				element.dataHtml = 'true';
+				var nodeafter =  document.getElementById("task_{{k}}_{{(block_task[k][j][0]|int-1)}}");
+				 nodeafter.parentNode.insertBefore(element, nodeafter.nextSibling);
+		{% endfor %}
+	{% endfor %}
+</script>
+
+<script type="text/javascript">
+var time_now = new Date()
+var index_time_now;
+
+// CHECK TIME DAY
+	if (0 <=time_now.getMinutes() && time_now.getMinutes()< 15) {
+		index_time_now = (time_now.getHours() - 8 + 1)*4+1
+	}
+	else if (15 <= time_now.getMinutes() && time_now.getMinutes() < 30){
+		index_time_now = (time_now.getHours() - 8 + 1)*4 +2
+	}
+	else if (30 <= time_now.getMinutes() && time_now.getMinutes() < 45){
+		index_time_now = (time_now.getHours() - 8 + 1)*4 +3
+	}else {
+		index_time_now = (time_now.getHours() - 8 + 1)*4 +4
+	}
+	if (new Date(parseInt("{{day_selected}}".substring(0,4)),parseInt("{{day_selected}}".substring(5,7))-1,parseInt("{{day_selected}}".substring(8,10))) < new Date(time_now.getFullYear(),time_now.getMonth(),time_now.getDate()))
+	{
+		{% for i in range(1,57) %}
+			document.getElementById({{i}}).disabled = true ;
+			document.getElementById({{i}}).style.backgroundColor = 'black';
+		{% endfor %}
+	};
+	if (new Date(parseInt("{{day_selected}}".substring(0,4)),parseInt("{{day_selected}}".substring(5,7))-1,parseInt("{{day_selected}}".substring(8,10))) >= new Date(time_now.getFullYear(),time_now.getMonth(),time_now.getDate()) && new Date(parseInt("{{day_selected}}".substring(0,4)),parseInt("{{day_selected}}".substring(5,7))-1,parseInt("{{day_selected}}".substring(8,10))) <= new Date(time_now.getFullYear(),time_now.getMonth(),time_now.getDate()))
+	{
+		for (i = 1; i < index_time_now; i ++)
+
+			{document.getElementById(i).disabled = true;
+			document.getElementById(i).style.backgroundColor = 'black';}
+	};
+</script>
+<script type="text/javascript">
+	//POPOVER TASK 
+	{% for k in range(block_task|length) %}
+
+		{% for j in range(block_task[k]|length) %}
+		$('.B_{{k}}_{{j}}').popover({
+	    html: true,
+	    title: function () {
+	        return $(this).parent().find('.title_B_{{k}}_{{j}}').html();
+	    },
+	    content: function () {
+	   		return $(this).parent().find('.content_B_{{k}}_{{j}}').html();
+	    	}  
+
+		});
+
+		function edit_task_B_{{k}}_{{j}}(){
+			document.getElementById('edit_task_B_{{k}}_{{j}}').style.display = "";
+			document.getElementById('btn_task_edit_{{k}}_{{j}}').style.display ="none";
+			$(".select-3").select2({
+	        	placeholder: "Người phối hợp"
+	        });
+
+		};
+		function task_back_{{k}}_{{j}}(){
+			document.getElementById('edit_task_B_{{k}}_{{j}}').style.display = "none";
+			document.getElementById('btn_task_edit_{{k}}_{{j}}').style.display ="";
+			$(".select-3").select2("destroy");
+		};
+		$(document).on('click','button[id^="color_"]',function() {
+			var id = $(this).attr('id').substring(6,$(this).attr('id').length);
+			var clas = $(this).attr('class').substring(13,$(this).attr('class').length);
+		    // $("div[class^='"+clas+"']").css("border-top-color", id);\
+		    $("input[class^='"+clas+"']").attr('value',id);
+		    // $('#ok').click();
+		});
+		{% endfor %}
+	{% endfor %}
+	$(document).on('click','button[id^="ok"]',function() {
+			$(".select-3").select2("destroy");
+		});
+
+	// // CLICK HTML HIDE POPOVER
+		var btn_clicked_floor_once;
+		var btn_clicked_B = [];
+		var btn_clicked_B_once;
+		var btn_clicked_EE_once;
+
+	    $("button[class^='B_']").on('click', function(){
+	    	
+	    	if($(this).attr('id') != btn_clicked_B_once){
+	    	try{
+	    		document.getElementById(btn_clicked_B_once).click();
+	    		}
+			catch(e) {} 
+			btn_clicked_B_once = '';
+			btn_clicked_B_once = $(this).attr('id');
+			}
+			else{btn_clicked_B_once = '';}
+			$(".selectexe").select2("destroy");
+			$(".select-2").select2("destroy");
+	    });
+
+	    $("div[class^='B_']").on('click', function(){    	
+	    	if($(this).attr('id') != btn_clicked_B_once){
+	    	try{document.getElementById(btn_clicked_B_once).click();}
+			catch(e) {} 
+			btn_clicked_B_once = '';
+			btn_clicked_B_once = $(this).attr('id');
+			}
+			else{btn_clicked_B_once = '';}
+			// $(".selectexe").select2("destroy");
+			// $(".select-2").select2("destroy");
+	    });
+	    
+
+	    $("button[class^='floor_']").on('click', function(){
+	    	
+	    	if($(this).attr('id') != btn_clicked_floor_once){
+	    		try{
+	    		document.getElementById(btn_clicked_floor_once).click();
+	    		}
+			catch(e) {} 
+			btn_clicked_floor_once = '';
+			btn_clicked_floor_once = $(this).attr('id');
+		}else{btn_clicked_floor_once = '';}
+		$(".selectexe").select2("destroy");
+			$(".select-2").select2("destroy");
+	    });
+	    $('html').on('click', function(e) {
+	    	if (typeof $(e.target).data('original-title') == 'undefined' && !$(e.target).parents().is('.popover.in')) {
+	    			try{
+	    			document.getElementById(btn_clicked_B_once).click();
+	    			
+	    			}
+	    			catch(e) {} 
+	    			try{
+	    			document.getElementById(btn_clicked_floor_once).click();
+	    			}
+	    			catch(e) {} 
+	    			try{
+	    			document.getElementById(btn_clicked_EE_once).click();
+	    			}
+	    			catch(e) {} 
+	    		btn_clicked_B_once = '';
+	    		btn_clicked_floor_once = '';
+	    		btn_clicked_EE_once = '';
+	    		$(".select-3").select2("destroy");
+	    	};
+	    	
+	    });
+</script>
+
+<script type="text/javascript">
+
+	function checkForm_task(form){
+		if(document.getElementById('executer_task').value == "") {
+	      alert("Xin mời chọn Người thực hiện.");
+	      document.getElementById('executer_task').focus();
+	      return false;
+	    }
+	    if(document.getElementById('task_name_t').value == "") {
+	      alert("Xin mời nhập Tên tài sản/Khách hàng/Công việc.");
+	      document.getElementById('task_name_t').focus();
+	      return false;
+	    }
+	    if(document.getElementById('job_type_t').value == "") {
+	      alert("Xin mời chọn loại Công việc.");
+	      document.getElementById('job_type_t').focus();
+	      return false;
+	    }
+	    
+	    return true;
+		}
+
+</script>
+<script type="text/javascript">
+	document.getElementById('all').style.display = "";
+</script>
+{% endblock %}
+

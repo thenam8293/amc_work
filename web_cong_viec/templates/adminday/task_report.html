@@ -1,0 +1,613 @@
+{% extends "layout_report.html" %}
+{% block content %}
+    <script type="text/javascript" src="static\MDB\js\fusioncharts.js"></script>
+    <script type="text/javascript" src="static\MDB\js\fusioncharts.charts.js"></script>
+    <script type="text/javascript" src="static\MDB\js\thememint.js"></script>
+    <script src="/static/scripts/highcharts.js"></script>
+    <script src="/static/scripts/drilldown.js"></script>
+    <link href="/static/content/bootstrap-select2.min.css" rel="stylesheet" />
+    <script src="/static/scripts/bootstrap-select2.min.js"></script>
+    <style type="text/css">
+    /** {border: solid 1px}*/
+        .canvas {margin: 0 auto}
+        .canvas_child {margin: 0}
+        .canvas_grand_child {width: 20%;float: left}
+        .tieu_de {margin: 0;text-align: center;height: 10vh;}
+        .tieu_de_lon {font-size: 24px;}
+        .tieu_de_nho {font-size: 14px;}
+        .thay_br {height: 3vh}
+        hr {border-top: 1px solid #ccc;}
+        * {color:black;}
+        .popover{max-width: 100vw;width:19.4vw;}
+        [class*="-creditgroup"],[class*="-credits"],[class*="highcharts-title"]{display: none}
+        /*style select 2*/
+        ul[class^='select2-results__options'] {background-color: #262626;font-size: 12px;}
+        ul[class^='select2-selection__rendered'] {background-color: transparent;font-size: 12px;}
+        li[class^='select2-results'] {background-color: transparent;color: white !important;font-size: 12px;}
+        .select2-results__option[aria-selected=true] {background-color: #cccccc !important;color: black !important;font-size: 12px;}
+        li[class^='select2-selection__choice'] {background-color: #cccccc !important;color: black;font-size: 12px;}
+        li[class^='select2-search'] {color: black;font-size: 12px;}
+        input[class^='select2-search__field'] {font-size: 15px !important;min-width: 19.4vw;font-size: 12px;}
+        .select2 {border-radius: 0 !important;font-size: 12px;height: 3.5vh}
+        span[class^='select2-selection'] {border-radius: 0 !important;background-color: #262626;color: white !important;font-size: 12px;}
+        .li_dien> a#bar_rp_task {background-color:#901E1D !important;font-weight: bold !important;color: white !important;border-bottom: 3px solid #901E1D !important}
+    </style>
+    <script type="text/javascript">
+        $(function() {
+        var submit_form = function(e) {
+            $.getJSON($SCRIPT_ROOT + '/_noti_read_fake', {
+            });
+            return false;
+            };
+            $('button#noti_btn').bind('click', submit_form);
+        });
+    </script>
+<form novalidate="novalidate" class="form-inline" method="POST" id="bang1">
+    <!-- NOTI -->
+    {% for i in range(list_noti|length) %}
+        <button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+        <span style="font-size:1.2vh;margin-left:-11vw">{{list_noti[i][2]}}</span>
+        </button>
+                <input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+                <input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+                <input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+    {% endfor %}   
+</form>
+<!--  -->
+
+<form novalidate="novalidate" class="form-inline" method="POST" id="bang2">
+    <!-- FILTER -->
+    <!-- <div>{{session['username']}}</div><br> -->
+<!--     <div>{{ds_n_0}}</div>
+    <div>{{ds_n_1}}</div>
+    <div>{{ds_n_2}}</div><br>
+    <div>{{ds_filter}}</div> -->
+    {% if ds_filter == [] %}
+        {% set ds_filter = [session['mail_name']] %}
+    {% endif %}
+    {% if ds_filter != [] %}
+        <div class="navbar navbar-inverse navbar-fixed-top" style="min-height: 1px !important;margin-top: 5vh !important;border-bottom:none;background-color: transparent !important;text-align:center;width: 65%;margin: 0 auto">
+            <div style="display: inline-block;width: 20vw;font-size: 0;">
+                <select name="filter_trungtam" class="form-control select-report" style="display:inline-block;min-width: 20vw;font-size: 12px;">
+                    {% for i in range(ds_filter|length) %}
+                        <option  style="" value="{{ds_filter[i]}}" {% if ds_filter[i] == filter_trungtam %} selected {% endif %}>{{ds_filter[i]}}</option>
+                    {% endfor %}
+                </select> 
+            </div>
+            <div style="width: 20vw;margin: 0 auto;margin-top: 1vh;font-size: 0">
+                <input type="date" name="start_time" id="start_time"  value="{{start_time_str}}" style="width: 9.5vw;margin-right: 1vw;font-size: 12px;">
+                <input type="date" name="end_time" id="end_time" value="{{end_time_str}}"  style="width: 9.5vw;font-size: 12px;">
+            </div>
+            <div style="width: 20vw;margin: 0 auto;margin-top: 1vh;font-size: 0;">
+                <button type="submit" name="submit_filter" value="1" id="btn_view_rp" style="width: 4vw;font-size: 12px;background-color: #262626;border: none;color: white;height: 3vh">OK
+                </button>
+            </div>
+    {% else %}
+        <p class="tieu_de" style=""><span class="tieu_de_lon">TỔNG QUAN</span><br><span class="tieu_de_nho">Thống kê tổng quát về số giờ làm và số công việc</span></p>
+    {% endif %}
+        </div>
+    <br><br>
+    <script type="text/javascript">
+        $("#btn_view_rp").click(function() {        
+            if($("#start_time").val() != '' && $("#end_time").val() == '') {
+                alert('Xin mời chọn thời gian Kết thúc');
+                return false;
+            }
+            if($("#start_time").val() == '' && $("#end_time").val() != '') {
+                alert('Xin mời chọn thời gian Bắt đầu');
+                return false;
+            }
+            if($("#start_time").val() > $("#end_time").val()){
+                alert('Thời gian kết thúc phải sau thời gian bắt đầu.');
+                return false;
+            }
+            return true;        
+        })
+    </script>
+    <script type="text/javascript">
+        $('.select-report').select2();
+    </script>
+    <!-- TOTAL TASK -->
+    <div style="margin:0 auto;width:75vw;margin-top: 6vh;">
+        <div class="test" style="vertical-align:middle;display: inline-block;margin-left:12vw;height: 5vh">
+            <div style="display:inline-block;font-size: 300%;font-weight: bold;color:#901e1d;width: 12vw;text-align: right">{{so_gio_lam_viec}}</div>
+             <div style="display: inline-block;margin:0 1vh">Giờ làm việc</div>
+             <div style="display:inline-block;font-size: 220%;font-weight: bold;color:#901e1d;width: 7vw;text-align: right">{{so_cong_viec}}</div>
+             <div style="display: inline-block;margin:0 1vh">Công việc </div>
+             <div style="display:inline-block;font-size: 150%;font-weight: bold;color:#901e1d;width: 3vw;text-align: right">{{so_nguoi_thuc_hien}}</div>
+             <div style="display: inline-block;margin:0 1vh">Người </div>
+             <div style="display:inline-block;font-weight: bold;color:#901e1d;width: 3vw;text-align: right">{{so_ngay_lam_viec}}</div>
+             <div style="display: inline-block;margin:0 1vh">Ngày</div>
+
+        </div>
+
+        <div class="test" style="display:inline-block;vertical-align:middle;margin-left:12vw;height: 10vh">
+            <div style="display:inline-block;font-size: 300%;font-weight: bold;color:#901e1d;width: 12vw;text-align: right">
+            {% if so_nguoi_thuc_hien|int != 0 %}
+            {{(so_gio_lam_viec|int/so_ngay_lam_viec|int/so_nguoi_thuc_hien|int)|round(2)}}
+            {% else %}
+            0
+            {% endif %}
+            </div>
+            <div style="display: inline-block;margin:0 1vh">Giờ làm việc </div>
+            <div style="display:inline-block;font-size: 220%;font-weight: bold;color:#901e1d;width: 7vw;text-align: right">
+            {% if so_nguoi_thuc_hien|int != 0 %}
+            {{(so_cong_viec|int/so_ngay_lam_viec|int/so_nguoi_thuc_hien|int)|round(2)}}
+            {% else %}
+            0
+            {% endif %}
+            </div>
+            <div style="display: inline-block;margin:0 1vh">Công việc </div>
+            <div style="display:inline-block;font-size: 150%;font-weight: bold;color:#901e1d;width: 3vw;text-align: right">1</div>
+            <div style="display: inline-block;margin:0 1vh">Người</div>
+            <div style="display:inline-block;font-weight: bold;color:#901e1d;width: 3vw;text-align: right">1</div>
+            <div style="display: inline-block;margin:0 1vh">Ngày</div>
+        </div>
+    </div>
+    <div>
+        <hr width="70%" style="margin:0 auto;margin-bottom:2vh">
+        <!-- TOTAL TASK-->
+        <p class="tieu_de" style=""><span class="tieu_de_lon">SỐ LƯỢNG CÔNG VIỆC</span><br><span class="tieu_de_nho">Phân bổ theo từng ngày</span></p>
+        <hr width="70%" style="margin:0 auto;margin-bottom:2vh">
+        <div id="so_luong_cong_viec" style="text-align: center; background-color: #ffffff"></div>
+    </div>
+    <!-- CHART NHÓM CÔNG VIỆC -->
+    <div style="background-color: #d9d9d9;">
+        <p class="tieu_de" style="padding-top:2vh;padding-bottom:2vh !important">
+            <span class="tieu_de_lon">NHÓM CÔNG VIỆC</span><br>
+            <span class="tieu_de_nho">Phân bổ thời gian theo từng nhóm công việc</span>
+        </p>
+        <hr width="70%" style="margin:0 auto;margin-top:2vh;margin-bottom: 2vh">
+        <div style="width: 49%;display: {% if filter_value == 'AMC' %} none {% else %} inline-block {% endif %};text-align: center;">Nhóm công việc theo trung tâm</div>
+        <div style="width: 49%;display: {% if filter_value == 'AMC' %} inline-block {% else %} none {% endif %};text-align: center;">Nhóm công việc theo toàn hàng</div>
+        <div style="width: 49%;display: inline-block;text-align: center;">Nhóm công việc theo công ty</div>
+
+        <div style="width: 100%">
+            <div style="width: 49%;display: inline-block;text-align: center">            
+                <div id="cong_viec_theo_trung_tam" style="text-align: center;display: {% if filter_value == 'AMC' %} none {% endif %}"></div>
+                <div id="cong_viec_theo_toan_hang" style="text-align: center;display: {% if filter_value != 'AMC' %} none {% endif %}"></div>
+            </div>
+            <div style=";width: 49%;display: inline-block;text-align: center">
+                <div id="cong_viec_theo_cong_ty" style="text-align: center;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- CHART THUC HIEN -->
+    <div>   
+        <p class="tieu_de" style="padding-top:2vh;padding-bottom:2vh !important">
+            <span class="tieu_de_lon" style="text-align: center">TUÂN THỦ</span><br>
+            <span class="tieu_de_nho" style="text-align: center">Tỷ lệ tuân thủ báo cáo và tuân thủ deadline</span>
+        </p>
+        <hr width="70%" style="margin:0 auto;margin-bottom:2vh;margin-top: 2vh">
+        <div style="width: 49%;display: inline-block;text-align: center;">Tỷ lệ tuân thủ thực hiện</div>
+        <div style="width: 49%;display: inline-block;text-align: center;">Tỷ lệ tuân thủ việc được giao</div>
+        <div style="width: 100%">
+            <div style="width: 49%;display: inline-block;text-align: center;">            
+                <div id="chart_thuc_hien" style="text-align: center"></div>
+            </div>
+            <div style=";width: 49%;display: inline-block;text-align: center;">
+                <div id="chart_qua_han" style="text-align: center;"></div>
+            </div>
+        </div><br>
+        <div style="display: {% if list_assignee|length == 0 %} none {% endif %}">
+        <div style="width: 100%;text-align: center;display: {% if ty_le_qua_han_giao_viec == [] %} none {% endif %}">Tỷ lệ tuân thủ việc giao</div>
+        <div id="chart_qua_han_giao_viec" style="text-align: center;"></div>
+        </div>
+    </div>
+
+    <!-- CHART THUC HIEN -->
+    <div>
+        <hr width="70%" style="margin:0 auto;margin-bottom:2vh;margin-top: 2vh">
+        {% if ty_le_tuan_thu_bao_cao_theo_user != [] %}
+        <table style="width:60%;vertical-align: top" align="center" border="1">
+            <thead>
+                <th style="padding: 0.5em;font-weight: bold">TÊN CBNV</th>
+                <th style="padding: 0.5em;font-weight: bold">TỔNG SỐ ĐÃ GIỜ BÁO CÁO</th>
+                <th style="padding: 0.5em;font-weight: bold">TỶ LỆ</th>
+                <!-- <th></th> -->
+            </thead>
+            {% for r in range(ty_le_tuan_thu_bao_cao_theo_user|length) %}
+            <tr>
+                <td style="width: 56%;padding:0.5em;margin-top: 0.5vh">{{ty_le_tuan_thu_bao_cao_theo_user[r][0]}}</td>
+                <td style="width: 20%;padding:0.5em;margin-top: 0.5vh;text-align: right;">{{ty_le_tuan_thu_bao_cao_theo_user[r][1]}}/{{ty_le_tuan_thu_bao_cao_theo_user[r][2]}} Giờ</td>
+                <td style="width: 18%;padding:0.5em;margin-top: 0.5vh;text-align: right;">{{ty_le_tuan_thu_bao_cao_theo_user[r][3]}}% </td>
+                <!-- <td style="width: 5%">&nbsp;</td> -->
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+    </div>
+    <!--<div style="background-color: #d9d9d9;">
+        <p class="tieu_de" style="padding-top:2vh;padding-bottom:2vh !important"><span class="tieu_de_lon">TUÂN THỦ DEADLINE</span><br><span class="tieu_de_nho">Tỷ lệ công việc thực hiện đúng hạn</span></p>
+       <hr width="70%" style="margin:0 auto;margin-top:2vh;margin-bottom: 2vh">
+       <div id="chart-container3" style="width: 80vw; margin: 0 auto"></div>    
+    </div> -->
+</form>
+<!-- TI LE TUAN THU -->
+<script type="text/javascript">
+    FusionCharts.ready(function () {
+        var revenueChart = new FusionCharts({
+            type: 'pie2d',
+            renderAt: 'chart_thuc_hien',
+            width: '550',
+            height: '450',
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    "paletteColors": "#901e1d,#000000",
+                    "showPercentValues": "1",
+                    "showPercentInTooltip": "1",
+                    "toolTipColor": "#ffffff",
+                    "toolTipBgColor":"#901e1d",
+                    "startingAngle" : "45",
+                    "decimals": "1",
+                    //Smart line cosmetics
+                    "smartLineColor": "#d11b2d",
+                    "smartLineThickness": "2",
+                    "smartLineAlpha": "75",
+                    "isSmartLineSlanted": "1",
+                    "showLegend": "0",
+                    //Theme
+                    "theme": "fint",
+                    "bgColor": "white",  
+                },
+                "data": [
+                    {
+                        "label": "Thực hiện đầy đủ",
+                        "value": {{ty_le_tuan_thu_bao_cao}},
+                    }, 
+                    {
+                        "label": "Thực hiện chưa đầy đủ",
+                        "value": {{100-ty_le_tuan_thu_bao_cao|int}},
+                    } 
+
+                ]
+            }
+        }).render();
+    });
+</script>
+
+<!-- DEADLINE -->
+<script type="text/javascript">
+    FusionCharts.ready(function () {
+        var revenueChart = new FusionCharts({
+            type: 'pie2d',
+            renderAt: 'chart_qua_han',
+            width: '550',
+            height: '550',
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    "paletteColors": "#901e1d,#b8b8b8,#BB4127,#000000",
+                    "showPercentValues": "1",
+                    "showPercentInTooltip": "1",
+                    "toolTipColor": "#ffffff",
+                    "toolTipBgColor":"#901e1d",
+                    "startingAngle" : "45",
+                    "decimals": "1",
+                    //Smart line cosmetics
+                    "smartLineColor": "#d11b2d",
+                    "smartLineThickness": "2",
+                    "smartLineAlpha": "75",
+                    "isSmartLineSlanted": "1",
+                    "showLegend": "0",
+                    //Theme
+                    "theme": "fint",
+                    "bgColor": "white",  
+                },
+                "data": [
+                    {
+                        "label": "{{so_cong_viec_qua_han[0]}} Công việc hoàn thành đúng hạn",
+                        "value": {{ty_le_qua_han[0]}},
+                    }, 
+                    {
+                        "label": "{{so_cong_viec_qua_han[1]}} Công việc hoàn thành quá hạn",
+                        "value": {{ty_le_qua_han[1]}},
+                    }, 
+                    {
+                        "label": "{{so_cong_viec_qua_han[2]}} Công việc chưa hoàn thành đúng hạn",
+                        "value": {{ty_le_qua_han[2]}},
+                    }, 
+                    {
+                        "label": "{{so_cong_viec_qua_han[3]}} Công việc chưa hoàn thành quá hạn",
+                        "value": {{ty_le_qua_han[3]}},
+                    }
+                ]
+            }
+        }).render();
+    });
+</script>
+<!-- chart_qua_han_giao_viec -->
+<script type="text/javascript">
+    FusionCharts.ready(function () {
+        var revenueChart = new FusionCharts({
+            type: 'pie2d',
+            renderAt: 'chart_qua_han_giao_viec',
+            width: '550',
+            height: '550',
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    "paletteColors": "#901e1d,#b8b8b8,#BB4127,#000000",
+                    "showPercentValues": "1",
+                    "showPercentInTooltip": "1",
+                    "toolTipColor": "#ffffff",
+                    "toolTipBgColor":"#901e1d",
+                    "startingAngle" : "45",
+                    "decimals": "1",
+                    //Smart line cosmetics
+                    "smartLineColor": "#d11b2d",
+                    "smartLineThickness": "2",
+                    "smartLineAlpha": "75",
+                    "isSmartLineSlanted": "1",
+                    "showLegend": "0",
+                    //Theme
+                    "theme": "fint",
+                    "bgColor": "white",  
+                },
+                "data": [
+                    {
+                        "label": "{{so_cong_viec_giao_qua_han[0]}} Công việc hoàn thành đúng hạn",
+                        "value": {{ty_le_qua_han_giao_viec[0]}},
+                    }, 
+                    {
+                        "label": "{{so_cong_viec_giao_qua_han[1]}} Công việc hoàn thành quá hạn",
+                        "value": {{ty_le_qua_han_giao_viec[1]}},
+                    }, 
+                    {
+                        "label": "{{so_cong_viec_giao_qua_han[2]}} Công việc chưa hoàn thành đúng hạn",
+                        "value": {{ty_le_qua_han_giao_viec[2]}},
+                    }, 
+                    {
+                        "label": "{{so_cong_viec_giao_qua_han[3]}} Công việc chưa hoàn thành quá hạn",
+                        "value": {{ty_le_qua_han_giao_viec[3]}},
+                    }
+                ]
+            }
+        }).render();
+    });
+</script>
+
+
+<!-- JOB DEPARTMENT -->
+<script type="text/javascript">
+
+    FusionCharts.ready(function () {
+        var revenueChart = new FusionCharts({
+            type: 'doughnut2d',
+            renderAt: 'cong_viec_theo_trung_tam',
+            width: '450',
+            height: '350',
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    // "caption": "Phân bổ thời gian theo từng nhóm công việc chiến lược",
+                    "captionFontSize": "18",
+                    // "subCaption": "Last year",
+                    // "numberPrefix": "$",
+                    "paletteColors": "#901e1d,#b8b8b8,#BB4127,#82625B,#000000,#F19986,#F1B3A5",
+                    "use3DLighting": "0",
+                    "showShadow": "1",
+                    "startingAngle": "20",
+                    "showPercentValues": "1",
+                    "showPercentInTooltip": "1",
+                    "enableSmartLabels": "1",
+                    "enableMultiSlicing": "0",
+                    "decimals": "1",
+                    "bgColor": "#b3b3b3",  
+                    "toolTipBgColor":"#901e1d", 
+                    "showLegend": "1",
+                    "showLabels": "0",
+                    //Theme
+                    "theme": "fint"
+                },
+                "data": [
+                {% for i in range(phan_bo_cv_theo_trung_tam|length) %}
+                    {
+                        "label": "{{ds_cv_theo_trung_tam[i]}} ({{phan_bo_cv_theo_trung_tam[i]}})",
+                        "value": "{{phan_bo_cv_theo_trung_tam[i]}}",
+                    }, 
+                {% endfor %}
+                ]
+            }
+        }).render();
+        
+    });
+</script>
+<!-- JOB DEPARTMENT -->
+<script type="text/javascript">
+    FusionCharts.ready(function () {
+        var revenueChart = new FusionCharts({
+            type: 'doughnut2d',
+            renderAt: 'cong_viec_theo_toan_hang',
+            width: '450',
+            height: '350',
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    // "caption": "Phân bổ thời gian theo từng nhóm công việc chiến lược",
+                    "captionFontSize": "18",
+                    // "subCaption": "Last year",
+                    // "numberPrefix": "$",
+                    "paletteColors": "#901e1d,#b8b8b8,#BB4127,#82625B,#000000,#F19986,#F1B3A5",
+                    "use3DLighting": "0",
+                    "showShadow": "1",
+                    "startingAngle": "20",
+                    "showPercentValues": "1",
+                    "showPercentInTooltip": "1",
+                    "enableSmartLabels": "1",
+                    "enableMultiSlicing": "0",
+                    "decimals": "1",
+                    "bgColor": "#b3b3b3",  
+                    "toolTipBgColor":"#901e1d", 
+                    "showLegend": "1",
+                    "showLabels": "0",
+                    //Theme
+                    "theme": "fint"
+                },
+                "data": [
+                {% for i in range(phan_bo_cv_theo_toan_hang|length) %}
+                    {
+                        "label": "{{ds_cv_theo_toan_hang[i]}} ({{phan_bo_cv_theo_toan_hang[i]}})",
+                        "value": "{{phan_bo_cv_theo_toan_hang[i]}}",
+                    }, 
+                {% endfor %}
+                ]
+            }
+        }).render();
+        
+    });
+</script>
+<!-- TYPE STRATEGY -->
+<!-- <script type="text/javascript">
+    FusionCharts.ready(function () {
+        var revenueChart = new FusionCharts({
+            type: 'doughnut2d',
+            renderAt: 'chart-container1',
+            width: '500',
+            height: '400',
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    // "caption": "Phân bổ thời gian theo từng nhóm công việc chiến lược",
+                    "captionFontSize": "18",
+                    // "subCaption": "Last year",
+                    // "numberPrefix": "$",
+                    "paletteColors": "#262626,#808080,#cccccc,#ff0000,#901e1d",
+                    "use3DLighting": "0",
+                    "showShadow": "1",
+                    "startingAngle": "20",
+                    "showPercentValues": "1",
+                    "showPercentInTooltip": "1",
+                    "enableSmartLabels": "1",
+                    "enableMultiSlicing": "0",
+                    "decimals": "1",
+                    "bgColor": "#b3b3b3",  
+                    "toolTipBgColor":"#901e1d", 
+                      "showLegend": "1",
+                    "showLabels": "0",
+                    //Theme
+                    "theme": "fint"
+                },
+                "data": [
+                {% for i in range(phan_bo_cv_theo_toan_hang|length) %}
+                    {
+                        "label": "{{ds_cv_theo_toan_hang[i]}}",
+                        "value": "{{phan_bo_cv_theo_toan_hang[i]}}",
+                    }, 
+                {% endfor %}
+                ]
+            }
+        }).render();
+        
+    });
+</script> -->
+<!-- TYPE JOB -->
+<script type="text/javascript">
+    FusionCharts.ready(function () {
+        var revenueChart = new FusionCharts({
+            type: 'doughnut2d',
+            renderAt: 'cong_viec_theo_cong_ty',
+            width: '450',
+            height: '350',
+            dataFormat: 'json',
+            dataSource: {
+                "chart": {
+                    // "caption": "Phân bổ thời gian theo từng nhóm công việc thực hiện",
+                    "captionFontSize": "2",
+                    "labelFontSize": "10",
+                    "paletteColors": "#901e1d,#b8b8b8,#BB4127,#82625B,#000000,#F19986,#F1B3A5,#439732,#325297,#693297,#97324A,#978E32",
+                    "use3DLighting": "0",
+                    "showShadow": "1",
+                    // "subCaption": "Last year",
+                    // "numberPrefix": "$",
+                    "startingAngle": "20",
+                    "bgColor": "#b3b3b3",
+                    "showPercentValues": "1",
+                    "showPercentInTooltip": "1",
+                    "toolTipBgColor":"#901e1d",
+                    "toolTipColor":"#ffffff",
+                    "enableSmartLabels": "1",
+                    "enableMultiSlicing": "0",
+                    "decimals": "1",
+                    "showLegend": "1",
+                    "showLabels": "0",
+                    //Theme
+                    "theme": "fint"
+                },
+                "data": [
+                {% for i in range(phan_bo_cv_theo_cong_ty|length) %}
+                    {
+                        "label": "{{ds_cv_theo_cong_ty[i]}} ({{phan_bo_cv_theo_cong_ty[i]}})",
+                        "value": "{{phan_bo_cv_theo_cong_ty[i]}}"
+                    }, 
+                {% endfor %}    
+                ]
+            }
+        }).render();   
+    });
+</script>
+
+<!-- TOTAL TASK -->
+
+<script type="text/javascript">
+    FusionCharts.ready(function(){
+        var salesChart = new FusionCharts({
+            type: 'scrollline2d',
+            dataFormat: 'json',
+            renderAt: 'so_luong_cong_viec',
+            width: '950',
+            height: '250',
+            dataSource: {
+                "chart": {
+                    // "caption": "Sales Trends",
+                    // "subCaption": "(FY 2012 to FY 2013)",
+                    "xAxisName": "Ngày",
+                    "yAxisName": "Số lượng",
+                    "showValues": "1",
+                    // "numberPrefix": "$",
+                    "showBorder": "0",
+                    "showShadow": "1",
+                    "bgColor": "#ffffff",
+                    "paletteColors": "#901e1d",
+                    "showCanvasBorder": "0",
+                    "showAxisLines": "1",
+                    "showAlternateHGridColor": "1",
+                    "divlineAlpha": "100",
+                    "divlineThickness": "1",
+                    "divLineIsDashed": "1",
+                    "divLineDashLen": "1",
+                    "divLineGapLen": "1",
+                    "lineThickness": "3",  
+                    "flatScrollBars": "1",
+                    "scrollheight": "10",
+                    "numVisiblePlot": "12",
+                    "showHoverEffect":"1",
+                    "toolTipBgColor":"#901e1d",
+                    "toolTipColor":"#ffffff",
+                },
+                "categories": [
+                    {
+                        "category": [
+                        {% for r in ds_10_ngay_gan_nhat %}
+                            { "label": "{{r}}" },
+                        {% endfor %}
+                        ]
+                    }
+                ],
+                "dataset": [
+                    {
+                        "data": [
+                        {% for r in ds_cong_viec_trong_10_ngay %}
+                            { "value": "{{r}}" },
+                        {% endfor %}
+                        ]
+                    }
+                ]
+            }
+        }).render();
+    });
+</script>
+{% endblock %}
+
+

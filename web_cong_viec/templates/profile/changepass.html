@@ -1,0 +1,141 @@
+{% extends "layout.html" %}
+	{% block content %}
+  <script type="text/javascript">
+    var p = "{{session.pwd}}";
+  </script>
+<style type="text/css">
+	.col-md-12 {padding-top: 10px;}
+
+.popover{max-width: 100vw;width:19.4vw;}
+.form-control{
+   border-radius:0;background-color: #cccccc !important;color: #262626;height: 3.7vh !important;min-width: 1vw !important;
+}
+.li_dien> a#bar_prf {
+        background-color:#901E1D !important;
+        font-weight: bold !important;
+        color: white !important;
+        border-bottom: 3px solid #901E1D !important;
+        }
+
+</style>
+<script type="text/javascript">
+
+  function checkForm(form)
+  {
+    // if(form.pwd.value == "") {
+    //   alert("Xin mời nhập mật khẩu.");
+    //   form.pwd.focus();
+    //   return false;
+    // }
+    // if(form.pwd.value != p) {
+    //   alert("Mật khẩu cũ chưa chính xác.");
+    //   form.pwd.focus();
+    //   return false;
+    // }
+    // if(form.pwd1.value == "") {
+    //   alert("Xin mời nhập mật khẩu.");
+    //   form.pwd1.focus();
+    //   return false;
+    // }
+    // if(form.pwd2.value == "") {
+    //   alert("Xin mời nhập mật khẩu.");
+    //   form.pwd2.focus();
+    //   return false;
+    // }
+    
+    // re = /^\w+$/;
+    // if(!re.test(form.pwd.value)) {
+    //   alert("Mật khẩu chỉ bảo gồm chữ, số và dấu gạch dưới.");
+    //   form.pwd.focus();
+    //   return false;
+    // }
+
+    // if(!re.test(form.pwd1.value)) {
+    //   alert("Mật khẩu chỉ bảo gồm chữ, số và dấu gạch dưới.");
+    //   form.pwd1.focus();
+    //   return false;
+    // }
+    // if(!re.test(form.pwd2.value)) {
+    //   alert("Mật khẩu chỉ bảo gồm chữ, số và dấu gạch dưới.");
+    //   form.pwd2.focus();
+    //   return false;
+    // }
+
+
+    // if(form.pwd1.value != "" && form.pwd1.value == form.pwd2.value) {
+    //   if(form.pwd1.value.length < 6) {
+    //     alert("Mật khẩu có độ dài tối thiểu là 6 ký tự.");
+    //     form.pwd1.focus();
+    //     return false;
+    //   }
+    //   if(form.pwd1.value == form.pwd.value) {
+    //     alert("Mật khẩu mới phải khác mật khẩu cũ.");
+    //     form.pwd1.focus();
+    //     return false;
+    //   }
+    //   re = /[0-9]/;
+    //   if(!re.test(form.pwd1.value)) {
+    //     alert("Mật khẩu phải có ít nhất một chữ số.");
+    //     form.pwd1.focus();
+    //     return false;
+    //   }
+    //   re = /[a-z]/;
+    //   if(!re.test(form.pwd1.value)) {
+    //     alert("Mật khẩu phải có ít nhât 1 ký tự viết thường.");
+    //     form.pwd1.focus();
+    //     return false;
+    //   }
+    //   re = /[A-Z]/;
+    //   if(!re.test(form.pwd1.value)) {
+    //     alert("Mật khẩu phải có ít nhât 1 ký tự viết hoa.");
+    //     form.pwd1.focus();
+    //     return false;
+    //   }
+    // }
+    // else if(form.pwd1.value != "" && form.pwd1.value != form.pwd2.value){
+    //   alert("Mật khẩu mới chưa khớp.");
+    //     form.pwd1.focus();
+    //     return false;
+    // }
+    //  else {
+    //   alert("Xin mời kiểm tra lại mật khẩu mới và xác nhận.");
+    //   form.pwd1.focus();
+    //   return false;
+    // }
+
+    // alert("Đổi mật khẩu thành công.");
+    // return true;
+  }
+
+</script>
+<!-- NOTI -->
+  <form action="" method="post">
+       {% for i in range(list_noti|length) %}
+      <button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+            <span style="font-size:1.2vh;margin-left:-11vw">{{list_noti[i][2]}}</span>
+          </button>
+          
+          <input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+          <input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+          <input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+      {% endfor %} 
+  </form>   
+<form action="" method="post" style="padding-top:140px;" onsubmit="return(checkForm(this))">
+
+      <div class="container"; align="center" style="margin-top:5vh">
+      <div class="col-md-12" >
+        <input class="form-control" type="password" placeholder="Mật khẩu cũ" name="pwd">
+      </div>
+      <div class="col-md-12">
+         <input class="form-control" type="password" placeholder="Mật khẩu mới" name="pwd1">
+      </div>
+      <div class="col-md-12">
+         <input class="form-control" type="password" placeholder="Xác nhận mật khẩu mới" name="pwd2">
+      </div>
+      <div class="col-md-12" style="margin-top:2vh">
+        <input class="btn btn-sm btn-danger" type="submit" value="Xác nhận" style="background-color:transparent;border:none;color: #262626;font-weight:bold">
+      </div>
+      </div>
+</form>
+{% endblock %}
+

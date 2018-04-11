@@ -1,0 +1,307 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<style type="text/css">
+
+	/*body {
+		background-image:url(static/images/tu5.jpg);background-size: 100%;
+	}*/
+	/** {border:1px solid black;}*/
+	.width_floor {width: 75%;}
+
+	 .pagination {
+    display: inline-block;margin: 0 auto;
+	}
+	.pagination a {
+	    float: left;
+	    text-decoration: none;
+	    color: white;
+	    width: 5vw;
+	    height: 4.3vh;
+	    font-size: 80%
+	}
+	.pagination a.active {	    
+	    color: white;
+	    width: 5vw;
+	    height: 4.3vh;
+	}
+	.pagination a.slot:hover:not(.active) {
+		background-color:#404040;
+	}
+	.pagination a.nut_an:hover:not(.active) {color:#901E1D;}
+	button.nut_an:hover {color: #901E1D !important}
+
+	.btn_edit_del_ok {
+		font-size: 1.7vh;border:none;padding:0;outline: none;color: #262626;
+		{% if request.form.get('filter_assignee') and session['username'] != request.form.get('filter_assignee') %}
+		visibility:hidden;
+		{% endif %}
+	} 
+	.box_task_report{
+		padding:0 9px;
+	}
+	.popover_height::-webkit-input-placeholder,
+	textarea::-webkit-input-placeholder
+	{
+	  color: #262626;
+	}
+	.slot{
+		background-color: #404040;padding-top:0.5vh !important;overflow: hidden
+	}
+	.input_cmt {
+		background: transparent; color: #cccccc;border-radius: 0
+	}
+
+	.modal-dialog{
+		margin:0 auto !important;width: 90vw;overflow-y: hidden !important;
+	}
+	.modal-content{
+	border-radius: 0 !important;background-color:#262626;margin-top: 20vh;height: 30vh;
+	}
+	#btn_task_edit{
+	{% if session.username != task_content[8] %}
+		visibility:hidden;
+	{% endif %}
+	}
+	label{vertical-align: top}
+		.popover .popover-title {background-color: white; border-radius: 0;}
+	 .popover{max-width: 100vw;width:29.4vw;}
+	 .popover_height {height: 3vh;border-radius: 0;width: 17vw; max-width: 17vw !important;}
+	 .popover_title {line-height:2vh;}
+	 .pop_tt_content {line-height:2.5vh}
+	 .form-control{max-width: 100vw !important;width: 27vw ;border:1px solid #cccccc;height:4.5vh;}
+	 thead{background-color: #b3b3b3;}
+</style>
+<div id="all" style="width:99.5vw;position:absolute">
+<script type="text/javascript">
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/_noti_read_fake', {
+      });
+      return false;
+    };
+    $('button#noti_btn').bind('click', submit_form);
+  });
+</script>
+<form novalidate="novalidate" class="form-inline" method="POST" id="bang1">
+<div>
+<!-- FIRST HALF -->
+<!-- NOTI -->
+ {% for i in range(list_noti|length) %}
+<button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+	 		<span class="content_sm" style="font-size:1.2vh;margin-left:-11vw;">{{list_noti[i][2]}}</span>
+	 	</button>
+	 	<input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+	 	<input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+	 	<input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+{% endfor %}
+<div id="first_half">
+<div id="ten_CV" style="margin-left:17.5%;margin-bottom:1vh;width:75vw;margin-top: 6.2vh">
+	<label class="{% if (task_content[1])|length < 100 %} title_md {% else %} title_md {% endif %}" style="margin-top:1vh;overflow:hidden;font-family: 'Calibri';font-size: 150%">{{task_content[1]}}</label>
+</div>
+
+<hr align="center" width="75%" style="margin-bottom:0.5vh;margin-top:4vh;border-top:1px solid #666666">
+<div id="task_box_content" style="width:75%;margin:0 auto;margin-bottom:1vh;vertical-align:top">
+	<label class=" title_sm " style="width:49%">Người giao việc: <span class="content_sm" style="font-weight:normal">{{task_content[11]}}</span></label>
+	<label class=" title_sm " style="width:49%">Người thực hiện: <span class="content_sm" style="font-weight:normal">{{task_content[10]}}</span></label>
+	<label class=" title_sm " style="width:49%;">Nội dung: <span class="content_sm" style="font-weight:normal">{{((task_content[4])|string)}}</span></label>
+	<label class=" title_sm " style="width:49%">Loại công việc: <span class="content_sm" style="font-weight:normal">{{task_content[20]}}</span></label>
+	<label class=" title_sm " style="width:49%">Hoàn thành: <span class="content_sm" style="font-weight:normal">{{task_content[6]}}</span></label>
+	<label class=" title_sm " style="width:6%;">Rating: </label>
+	<label class=" title_sm " style="width:16%;">
+	<button type="button" id="star_1" class="glyphicon glyphicon-star-empty c" value="1" style="background-color:transparent;border:none;outline:none"  onmouseover="rating_hover()" onmouseout="rating_out()" onclick="rating(event);"></button>
+	<button type="button" id="star_2" class="glyphicon glyphicon-star-empty c" value="2" style="background-color:transparent;border:none;outline:none" onclick="rating(event);" onmouseover="rating_hover()" onmouseout="rating_out()"></button>
+	<button type="button" id="star_3" class="glyphicon glyphicon-star-empty c" value="3" style="background-color:transparent;border:none;outline:none" onclick="rating(event);" onmouseover="rating_hover()" onmouseout="rating_out()"></button>
+	<button type="button" id="star_4" class="glyphicon glyphicon-star-empty c" value="4" style="background-color:transparent;border:none;outline:none" onclick="rating(event);" onmouseover="rating_hover()" onmouseout="rating_out()"></button>
+	<button type="button" id="star_5" class="glyphicon glyphicon-star-empty c" value="5" style="background-color:transparent;border:none;outline:none" onclick="rating(event);" onmouseover="rating_hover()" onmouseout="rating_out()"></button>
+	</label>
+	<label class=" title_sm " style="width:49%">Bắt đầu: <span class="content_sm" style="font-weight:normal">{{task_content[15]}}</span></label>
+	<label class=" title_sm " style="width:49%">Kết thúc: <span class="content_sm" style="font-weight:normal">{{task_content[16]}}</span></label>
+</div>
+
+<div class="width_floor" style="margin:0 auto;">
+<label class="content_sm" style="">{{assessment_1}}</label><br>
+<label class="content_sm" style="">{{assessment_2}}</label>
+</div>
+<div style="margin:0 auto;margin-top:1vh" class="width_floor">
+	<table style="width:100%;">
+		<thead>
+			<tr>
+				<td class="title_sm" style="width:3%">STT</td>
+				<td class="title_sm" style="width:35%">Nội dung</td>
+				<td class="title_sm" style="width:17%">Người thực hiện</td>
+				<td class="title_sm" style="width:20%">Thời gian bắt đầu</td>
+				<td class="title_sm" style="width:20%">Thời gian kết thúc</td>
+				<td class="title_sm" style="width:5%">Tỉ lệ</td>
+
+			</tr>
+		</thead>
+	</table>
+</div>
+<div style="height:11vh;margin:0 auto;overflow-y:scroll" class="width_floor">
+	<table style="width:100%;">
+		<thead>
+			<tr>
+				<td class="title_sm" style="width:3%"></td>
+				<td class="title_sm" style="width:35%"></td>
+				<td class="title_sm" style="width:17%"></td>
+				<td class="title_sm" style="width:20%"></td>
+				<td class="title_sm" style="width:20%"></td>
+				<td class="title_sm" style="width:5%"></td>
+
+			</tr>
+		</thead>
+		<tbody>
+		{% for i in range(event_content|length) %}
+            <tr style="">
+                <td  style="" class="content_sm">
+                
+                <button type="submit" name="go_task" value="{{event_content[i][16]}}" style="background-color:transparent;border:none;outline:none;font-weight:bold;color:262626">{{event_content[i][1].split('.')[-1]}}</button>
+                </td>
+                <td style="" class="content_sm">{{event_content[i][5]}}</td>
+                <td style="" class="content_sm">{{event_content[i][8]}}</td>
+                <td style="" class="content_sm">{{event_content[i][16]}}</td>
+                <td style="" class="content_sm">{{event_content[i][17]}}</td>
+                <td style="" class="content_sm">{{event_content[i][7]}}</td>
+            </tr>
+         {% endfor %}
+
+		</tbody>
+	</table>
+</div>
+<br>
+
+</div>
+<br>
+	<label class=" title_md" style="margin-bottom:1vh;margin-left:12.5%;">Thảo luận công việc</label>
+<div id="div_comment" style="border:1px solid #666666;width:75%;margin:0 auto;font-size:0;height:20vh">
+
+<!-- COMMENT CONTENT  -->
+<div id="div_cmt_content" style="font-size:0;height:20vh;overflow-y:scroll;">
+{% if cmt == [] %}
+<div style="padding:0.5vh 0.5vh;display:inline-block;font-weight:normal;" class="content_sm">Chưa có nội dung thảo luận.</div>
+{% endif %}
+{% for i in range(cmt|length) %}
+	<div id="{{i}}" style="padding:0.5vh 0.5vh">
+	<div class="title_sm" style="display:inline-block;font-weight:bold;">{{cmt[i][1]}} :</div>
+	<br>
+	<div class="content_sm" style="display:inline-block;">{{cmt[i][2]}}</div>
+	<br>
+	<div class="content_sm" style="display:inline-block;font-size:1.2vh;padding-bottom:1vh">{{cmt[i][3]}}</div>
+	<br>
+	</div>
+{% endfor %}
+</div>
+<!-- COMMENT FIELD-->
+<br>
+</div>
+<br>
+<div style="width:75%;margin:0 auto;font-size:0;margin-bottom:5vh">
+	<div id="div_cmt_input" style="font-size:0;">
+	<div class="" style="height:30px;margin:0 auto;display:inline-block;width:95%">
+		<input type="text" id="cmt_id" name="comment" class="form-control input_cmt content_sm" style="max-width:100vw;width:100%;height: 100%;background-color: #cccccc; border:1px solid #666666 !important" >
+	</div>
+	<div class="" style="height:30px;margin:0 auto;display:inline-block;width:5%">
+		<button id="btn_send" type="submit" name="submit_comment" value="1" class="btn btn-success input_cmt" style="background:#901E1D;width:100%;border:1px solid #901E1D;text-align:center;padding:0;height:100%">Send</button>
+	</div>
+	</div>
+</div>
+</div>
+<!-- SECOND HALF -->
+</form>
+</div>
+
+<script type="text/javascript">
+ment.getElementById("div_cmt_content");
+div_cmt.scrollTop = div_cmt.scrollHeight;
+
+</script>
+<!-- NGOI SAO -->
+<script type="text/javascript">
+	{% for i in range(1,6) %}
+	{% if task_content[8] != session['username'] %}
+	document.getElementById('star_{{i}}').disabled = true;
+	{% endif %}
+	{% endfor %}
+	{% for i in range(1,task_content[18]|int+1) %}
+	document.getElementById('star_{{i}}').className = 'glyphicon glyphicon-star c';
+	document.getElementById('star_{{i}}').style.color = '#901E1D';
+	{% endfor %}
+	var on_out = 0
+	var evt;
+		function rating(event) {
+		if (on_out != 1) {
+		evt =  event.target.id || event.srcElement.id;
+		star = parseInt(evt.substring(5,6));
+		var i;
+		for(i=1;i<= star;i++){
+			document.getElementById('star_'+String(i)).className = 'glyphicon glyphicon-star c';
+			document.getElementById('star_'+String(i)).style.color = '#901E1D';
+		};
+		for(i=star+1;i<= 5;i++){
+			document.getElementById('star_'+String(i)).className = 'glyphicon glyphicon-star-empty c';
+			document.getElementById('star_'+String(i)).style.color = 'black';
+		};
+		};
+		on_out = 1
+		};
+	var evt_hover;
+		function rating_hover() {
+		if (on_out != 1) {
+		evt_hover =  event.target.id || event.srcElement.id;
+		star = parseInt(evt_hover.substring(5,6));
+		var i;
+		for(i=1;i<= star;i++){
+			document.getElementById('star_'+String(i)).className = 'glyphicon glyphicon-star c';
+			document.getElementById('star_'+String(i)).style.color = '#901E1D';
+		};
+			for(i=star+1;i<= 5;i++){
+			document.getElementById('star_'+String(i)).className = 'glyphicon glyphicon-star-empty c';
+			document.getElementById('star_'+String(i)).style.color = 'black';
+		};
+		};
+	};
+		function rating_out() {
+			if (on_out != 1) {
+		for(i=1;i<= 5;i++){
+			document.getElementById('star_'+String(i)).className = 'glyphicon glyphicon-star-empty c';
+			document.getElementById('star_'+String(i)).style.color = 'black';
+		};
+		{% for i in range(1,task_content[18]|int+1) %}
+		document.getElementById('star_{{i}}').className = 'glyphicon glyphicon-star c';
+		document.getElementById('star_{{i}}').style.color = '#901E1D';
+		{% endfor %}
+		};
+
+		};
+	  $(function() {
+	    var rating = function(e) {
+	      $.getJSON($SCRIPT_ROOT + '/_rating', {
+	      	star: $('#'+evt).val(),
+	      	assigner: '{{session.username}}',
+	      	assigner_name: '{{task_content[11]}}',
+	      	executer: '{{task_content[7]}}'
+	      });
+	      return false;
+	    };
+	    $("button[id^='star_']").bind('click', rating);
+	  });
+</script>
+<script type="text/javascript">
+              $(function() {
+                var submit_form = function(e) {
+                  $.getJSON($SCRIPT_ROOT + '/_getdata', {
+
+                  }, function(data) {
+                    var day_selected_task_groupby = data.day_selected_task_groupby
+                    var block_main = data.block_main
+                    {% set nam1 = 4 %}
+                  });
+                  return false;
+                };
+                // $('#modal_fake').bind('click', submit_form);
+              });
+            </script>
+
+
+{% endblock %}

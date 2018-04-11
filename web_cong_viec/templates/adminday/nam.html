@@ -1,0 +1,1246 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+
+<script type="text/javascript">
+	
+function back() {
+    document.getElementById(back_id_end).click();
+    var i1 = parseInt(back_id_end.substring(2,back_id_end.length));
+    var i2 = parseInt(back_id_start.substring(2,back_id_start.length));
+    for(i2; i2<i1+1 ;i2++){
+		document.getElementById(i2).style.background = '#666666';
+		document.getElementById(i2).disabled = false;
+	};
+	for(j=0;j<list_click_popover.length;j++){
+		document.getElementById(list_click_popover[j]).disabled = false;
+	};
+	count_click_popover = 0;
+	list_click_popover = [];
+ };
+</script>
+<style type="text/css">
+	/**{border:1px solid black;}*/
+	.li_dien> a#bar_rpt {
+        background-color:#901E1D !important;
+        font-weight: bold !important;
+        color: white !important;
+        border-bottom: 3px solid #901E1D !important;
+        }
+     .bootstrap-datetimepicker-widget table{
+			background: white ;
+		}
+		.bootstrap-datetimepicker-widget table>thead{
+			background-color: #cccccc;	 
+		}
+	.button_color{border: none;height:15px;width:15px;border-radius: 4px;margin-right: 0.5vh;margin-top: -0.2vh}
+	.calendar {height: 3vh;width: 3vw;font-size: 10px;border: none;outline: none;background-color: transparent;}
+	.btn_add_new_task {margin-left: 4vw;margin-top: 3vh;border: none;text-decoration: none;font-size: 17px}
+	div.arrow {display: none !important;}
+	.div_inside {width: 100%;overflow: hidden;color:black;font-size:10px;text-overflow: ellipsis;margin: 0;}
+	.popover{margin-bottom: 5vh}
+</style>
+<div id="all" style="display:none;width:100vw;position:absolute">
+<script type="text/javascript">
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON($SCRIPT_ROOT + '/_noti_read_fake', {
+      });
+      return false;
+    };
+    $('button#noti_btn').bind('click', submit_form);
+  });
+</script>
+<!-- MAIN -->
+<form novalidate="novalidate" class="form-inline" method="POST" id="bang1" >
+{% set range_time = ((14)*(60/15))|int %}
+
+
+{% set d = (day_selected|string).split(" ")[0] %}
+{% set day = d.split("-")[2] %}
+{% set month = d.split("-")[1] %}
+{% set year = d.split("-")[0] %}
+{% set d_now = (day_now|string).split(" ")[0] %}
+{% set day_now = d_now.split("-")[2] %}
+{% set month_now = d_now.split("-")[1] %}
+{% set year_now = d_now.split("-")[0] %}
+
+
+<!-- CALENDAR -->
+<div style="margin-top:0vh;width: 100%;">
+	<div style="margin-left:0;display:inline-block;width: 20vw;background-size:100% 100%"></div>
+	<div style="display:inline-block;float:right;margin-right: 5vw;">
+		<div style="width: 22vw;text-align: center;color: black;font-weight: bold;">
+		{{day}}/{{month}}/{{year}}
+		</div>
+	</div>		
+</div>
+<div style="margin-top:0vh;width: 100%;">
+	<div style="margin-left:0;display:inline-block;height: 17vh;width: 20vw;background-size:100% 100%"></div>
+	<div style="display:inline-block;float:right;margin-right: 5vw;" id="calendar">
+		<div style="width: 21.5vw;font-size: 0;" id="row_1">
+			<button type="button" style="height: 2vh;width: 2vw;font-size: 15px;border:  none;font-weight: bold;outline: none;background-color: transparent;" id="previous_month" class="glyphicon glyphicon-circle-arrow-left"></button>
+			<button type="button" style="height: 2vh;width: 4.5vw;font-size: 10px;border:  none;font-weight: bold;outline: none;background-color: transparent;" id=""></button>
+			<button type="button" style="height: 2vh;width: 8vw;font-size: 10px;border:  none;font-weight: bold;outline: none;background-color: transparent;" id="mmdd"></button>
+			<button type="submit" style="height: 2vh;width: 4.3vw;font-size: 10px;border:  none;font-weight: bold;outline: none;background-color: transparent;" id="to_day" name="select_day"  value="{{day_now}}/{{month_now}}/{{year_now}}" >To day</button>
+			<button type="button" style="height: 2vh;width: 2vw;font-size: 15px;border: none;font-weight: bold;outline: none;background-color: transparent;" id="next_month" class="glyphicon glyphicon-circle-arrow-right"></button>			
+		</div>
+		<div style="width: 21.5vw;font-size: 0;" id="row_2">
+			{% for i in ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] %}
+				<button type="button" class="calendar">{{i}}</button>
+			{% endfor %}
+		</div>
+		<div style="width: 21.5vw;font-size: 0;" id="row_3"></div>
+	</div>		
+</div>
+
+<!-- OK -->
+<div>
+	<!-- NOTI -->
+	 {% for i in range(list_noti|length) %}
+			<button type="submit" style="width:100%;height:5vh;border:none;outline:none;display:none" id="btn_f_{{i}}"  name="btn_noti_content" value="{{i}}">{{list_noti[i][1]}}<br>
+		 		<span style="font-size:1.2vh;margin-left:-11vw">{{list_noti[i][2]}}</span>
+		 	</button>
+		 	<input type="text" name="noti_id_{{i}}" value="{{list_noti[i][8]}}" style="display:none">
+		 	<input type="text" name="redirect_noti_{{i}}" value="{{list_noti[i][3]}}" style="display:none">
+		 	<input type="text" name="input_noti_{{i}}" value="{{list_noti[i][4]}}" style="display:none">
+	{% endfor %}	
+	<!-- TANG TRÊN -->
+	{% for r in range(block_floor|length) %}
+		<div id="div_task_floor_{{r}}" style="font-size:0;margin-bottom: 1vh;">
+
+			<div id="fl{{r}}" class="width_floor" style="font-size:0;margin:0 auto;display:inline-block;margin-bottom:-1vh;margin-left: 5%;width: 90%">
+				<input type="text" id="{{r}}_floor0" style="width:{{100/(14*12)}}%;display: none" disabled>
+				{% for i in range(1,(14*12)|int+1) %}
+				<input type="text" id="{{r}}_floor{{i}}" style="width:{{100/(14*12)}}%;visibility:hidden"  disabled>
+				{% endfor %}
+			  {% for j in range(block_floor[r]|length) %}
+				  <div class="title_floor_{{r+2}}_{{j}} hide">
+				  	<label class="title_sm" style="">Tên tài sản/Khách hàng/Công việc:</label><br>
+				  	<label class="content_sm popover_title pop_tt_content" style=""> {{content_floor[r][j][1]}}</label><br>
+				  	<label class="title_sm popover_title" style="">Nội dung giao việc: </label><br>
+					<label class="content_sm popover_title pop_tt_content" style="white-space: pre-wrap">{{content_floor[r][j][4]}}</label><br>
+				  	<label class="title_sm popover_title" style="width:49%">Người thực hiện:</label>
+				  	<label class="title_sm popover_title" style="width:49%">Người hỗ trợ: </label>
+					<label class="content_sm popover_title pop_tt_content" style="width:49%"></label>
+					<label class="content_sm popover_title pop_tt_content" style="width:49%">{{content_floor[r][j][3]}}</label><br>
+					<label class="title_sm popover_title" style="width:49%">Loại công việc: </label>
+					<label class="title_sm popover_title" style="width:49%">Tỷ lệ hoàn thành:</label><br>
+					<label class="content_sm popover_title pop_tt_content" style="width:49%"> {{content_floor[r][j][2]}}</label>
+					<label class="content_sm popover_title pop_tt_content" style="width:49%"> {{content_floor[r][j][6]}}</label><br>
+				  </div>
+				  <div class="content_floor_{{r+2}}_{{j}} hide">
+				  <button type="submit" class="btn btn-default btn_edit_del_ok" name="tracking" value="{{content_floor[r][j][0]}}" style="outline:none;font-weight:bold;">Chi tiết</button>
+				  <button type="button" class="btn btn-default btn_edit_del_ok" name="" id="make_report_{{r+2}}_{{j}}" value="{{content_floor[r][j][0]}}" style="outline:none;font-weight:bold;" onclick="check_percent_make_report();">Nhập công việc</button>
+				  </div>
+			  {% endfor %}
+			</div>
+		</div>
+	{% endfor %}
+</div>
+<!-- SECOND HALF -->
+<div style="min-height:49.6vh;margin-top: 3vh;">
+<!-- REAL -->
+	<div style="margin-left:5%;margin-top: 10vh;font-size:0;width: {{90*(range_time+1)/range_time}}%" >
+		{% for i in range(1, 21) %}
+		<button class="color_time_bar" id="{{i}}" name="report{{i}}" type="button" onclick="f1(event);" style="width:{{100/(range_time+1)}}%;height:5px;border:none;padding:0; outline:none;font-size:0">{{i}}</button>
+		{% endfor %}
+
+		{% for i in range(21, 27) %}
+		<button class="color_time_bar" id="{{i}}" name="report{{i}}" type="button" onclick="f1(event);" style="width:{{100/(range_time+1)}}%;height:5px;border:none;padding:0; outline:none;font-size:0;background-color: black" disabled="">{{i}}</button>
+		{% endfor %}
+
+		{% for i in range(27,range_time +1) %}
+		<button class="color_time_bar" id="{{i}}" name="report{{i}}" type="button" onclick="f1(event);" style="width:{{100/(range_time+1)}}%;height:5px;border:none;padding:0; outline:none;font-size:0">{{i}}</button>
+		{% endfor %}
+
+		<button id='{{range_time+1}}' name="report{{range_time+1}}" type="button" disabled style="width:{{100/(range_time+1)}}%;height:5px;border:none;border-left:1px solid #666666;padding:0; outline:none;font-size:0;background-color: transparent;">1</button>
+	</div>
+<!-- LONG CHIM -->
+
+	<div style="margin-left:3.4%;font-size:0;width:{{90*(range_time+2)/(range_time)}}%" >
+		{% for i in range(range_time +2) %}
+			<button id="cc{{i}}" class="trigger" data-placement="bottom" type="button" style="width:{{100/(range_time+2)}}%;border:none;padding:0;outline:none;background-color:black;visibility: hidden;">{{i}}</button>
+		{% endfor %}
+		<div class="select_report_task hide" id="popover_select_cong_viec" style="">
+		
+		    <div id="chon_cong_viec" class="" style="">
+			      <select id="select_cong_viec" name="select_cong_viec" class="form-control popover_height content_sm" style="width:13.5vw;margin-bottom:0.5vh;" onchange="check_time_task();chon_cong_viec();check_percent();">
+			          <option value="" disabled selected hidden>Chọn công việc</option>
+			          <option  value="cong_viec_moi">Công việc mới</option>
+
+			          {% for i in old_task %}
+			          <option value="{{i[0]}}">{{i[1]}}</option>
+			          {% endfor %}
+			      </select>
+			      <button type="button" class="btn btn-default btn_edit_del_ok" style="padding-left:1vw;font-weight:bold;outline:none;margin-top:0.5vh;" onclick="back()">Hủy</button>
+		    </div>
+	 <!-- CV moi -->
+		    <div id="input_cong_viec_moi" class="" name="input_cong_viec_moi" style="display: none;">
+		      <input class="form-control popover_height content_sm" type="text" name="Task_name_rp" id="task_name_rp" placeholder="Tên công việc" autocomplete="off">
+		      <select name="type_department" id="job_type_rp" class="form-control popover_height content_sm" style="padding-left: 9px; ">
+		      		<option value="" disabled selected hidden>Loại công việc</option>
+		          {% for r in list_type_department %}
+		          	<option value="{{r}}">{{r}}</option>
+		          {% endfor %}
+		      </select>
+		     
+		      <textarea class="form-control popover_height content_sm" style="display: inline;" type="text" id="content_12" name="Description_rp" placeholder="Mô tả chi tiết về công việc thực hiện"></textarea>
+		        <select name="Percentage" id="percent"  class="form-control popover_height content_sm" style='display: inline;padding-left: 10px;'>
+		             <option value="" disabled selected hidden>Ước tính hoàn thành</option>
+		             <option value="100%">100%</option>
+		             <option value="95%">95%</option>
+		             <option value="90%">90%</option>
+		             <option value="85%">85%</option>
+		             <option value="80%">80%</option>
+		             <option value="75%">75%</option>
+		             <option value="70%">70%</option>
+		             <option value="65%">65%</option>
+		             <option value="60%">60%</option>
+		             <option value="55%">55%</option>
+		             <option value="50%">50%</option>
+		             <option value="45%">45%</option>
+		             <option value="40%">40%</option>
+		             <option value="35%">35%</option>
+		             <option value="30%">30%</option>
+		             <option value="25%">25%</option>
+		             <option value="20%">20%</option>
+		             <option value="15%">15%</option>
+		             <option value="10%">10%</option>
+		             <option value="5%">5%</option>
+		             <option value="0%">0%</option>
+		      </select>	
+		    <div id="div_chen_cvmoi" class="content_sm"></div>
+		        <br>
+		        <button type="submit" class="btn btn-default btn_edit_del_ok " style="padding-right:0;padding-top:10px;outline:none;font-weight:bold;"  id="submit_newtask" name="submit" value="new_task" onclick="return checkForm_report(this)">Xác nhận</button>
+		        <button type="button" class="btn btn-default btn_edit_del_ok " style="padding-top:10px;font-weight:bold;outline:none;" onclick="back()">Hủy</button>
+		    </div>
+		    <!-- cv cu -->
+		    {% for i in range(old_task|length) %}
+		    <div id="input_cong_viec_cu{{old_task[i][0]}}" class="" style="display: none;">
+			      <textarea class="form-control popover_height content_sm" style="max-height: 30vh;display: inline;" type="text" name="Content{{old_task[i][0]}}" id="Content{{old_task[i][0]}}" placeholder="Nội dung báo cáo"></textarea>
+			      <div id="per_{{old_task[i][0]}}"></div>	
+			      <div id="div_chen_cvcu{{old_task[i][0]}}" class="content_sm"></div>
+			      <button type="submit" class="btn btn-default btn_edit_del_ok" style="padding-right:10px;padding-top:10px;outline:none;font-weight:bold;" id="submit_oldtask" name="submit" value="old_task" onclick="return checkForm_report_CVcu_{{i}}(this)">Xác nhận</button>
+			      <button type="button" class="btn btn-default btn_edit_del_ok" style="padding-top:10px;font-weight:bold;outline:none;" onclick="back()">Hủy</button>
+		    </div>
+		    {% endfor %}
+		</div>
+	</div>
+<!-- KHONG CHINH GI O DAY HET -->
+	<!-- RULES -->
+		<div style="margin-left: 5%;font-size:0;width: {{90*(range_time+1)/range_time}}%" >
+			{% for i in range(1,range_time+1) %}
+			{% if i%2 == 0 %}
+			<button type="button" disabled="" style="width:{{100/(range_time+1)}}%;height:0.6vh;border:none;border-left: 1px solid #666666;padding:0;outline:none;background-color:transparent;font-size:0">{{i}}</button>
+			{% endif %}
+			{% if i%2 == 1 %}
+			<button type="button" disabled="" style="width:{{100/(range_time+1)}}%;height:1vh;border:none;border-left: 1px solid black;padding:0;outline:none;background-color:transparent;font-size:0">{{i}}</button>
+			{% endif %}
+			{% endfor %}
+			
+			<button type="button" disabled="" style="width:{{100/(range_time+1)}}%;height:1vh;border:none;border-left: 1px solid black;padding:0;outline:none;background-color:transparent;font-size:0">0</button>
+		</div>
+	<!-- MOC THOI GIAN -->
+		<div style="width:{{90*15/14}}%;margin:0 auto;font-size:0;margin-top:0.5vh">
+			{% for i in list_moc_thoi_gian %}
+				<button type="button" disabled style="width:{{100/(list_moc_thoi_gian|length)}}%;height:2vh;font-size:10px;background-color:transparent;color:#262626;border: none;outline:none">
+					{{i}}
+				</button>
+			{% endfor %}
+		</div>
+<!-- BASE FLOOR -->
+	<button type="button" id="add_new_event_old_task" class="glyphicon glyphicon-plus btn_add_new_event_old_task" data-placement="bottom" style="outline: none;margin-left: 50vw;visibility:hidden;"></button>
+	<div class="add_new_event_old_task hide" style="">
+	    <div id="" class="" style="">
+		      <textarea class="form-control popover_height content_sm" style="max-height: 30vh;display: inline;" type="text" name="Content_make_report" id="" placeholder="Nội dung báo cáo"></textarea>
+		      <div id="per_make_report"></div>	
+		      <input type="datetime-local" class="form-control content_sm" name="time_old_start_make_report" id="">
+	      	  <input type="datetime-local" class="form-control content_sm" name="time_old_end_make_report" id="">
+		      <label style="color: black;margin-top: 10px;margin-left: 10px;">Công việc này sẽ được điền vào các khoảng thời gian còn trống.</label><br>
+		      <button type="submit" class="btn btn-default btn_edit_del_ok" style="padding-right:10px;padding-top:10px;outline:none;font-weight:bold;" id="" name="submit_make_report" value="old_task">Xác nhận</button>
+		      <button type="button" class="btn btn-default btn_edit_del_ok" id="back_make_report" style="padding-top:10px;font-weight:bold;outline:none;">Hủy</button>
+	    </div>
+	</div>
+
+	<div id="div_t1">
+		<input type="text" id="block_base" value="{{block_base}}" name="block_base" style="display: none">
+		<input type="text" id="content_base" value="{{content_base}}" name="content_base" style="display: none">
+		{% for k in range(block_base|length) %}
+		<div id="div_executer{{k}}" style="font-size:0;margin:0;padding:0">
+			<div id="div_task_{{k}}" style="font-size:0;margin:0 auto;margin-left: 5%;margin-top: 2vh;display:inline-block;width: 90%">
+					  <input type="text" id="task_{{k}}_0" style="width:{{100/(14*12)}}%;display: none" disabled>
+					  {% for i in range(1,(14*12)|int+1) %}
+					  <input type="text" id="task_{{k}}_{{i}}" style="width:{{100/(14*12)}}%;visibility:hidden" disabled>
+					  {% endfor %}
+			  <!-- EDIT_REPORT -->
+			  {% for j in range(block_base[k]|length) %}
+			  <div class="title_B_{{k}}_{{j}} hide" >
+				  	  	<label class="title_sm" style="">Tên tài sản/Khách hàng/Công việc:</label><br>
+				  	  	<label class="content_sm popover_title pop_tt_content" style=""> {{content_base[k][j][2]}}</label><br>
+				  	  	<label class="title_sm popover_title" style="">Nội dung giao việc: </label><br>
+				  		<label class="content_sm popover_title pop_tt_content" style="white-space: pre-wrap">{{(content_base[k][j][5])}}</label><br>
+				  		<label class="title_sm popover_title" style="">Nội dung báo cáo: </label><br>
+				  		<label class="content_sm popover_title pop_tt_content" style="white-space: pre-wrap"> {{content_base[k][j][5]}}</label><br>
+				  		<label class="title_sm popover_title" style="width:49%">Loại công việc: </label>
+				  		<label class="title_sm popover_title" style="width:49%">Tỷ lệ hoàn thành: </label><br>
+				  		<label class="content_sm popover_title pop_tt_content" style="width:49%"> {{content_base[k][j][20]}}</label>
+				  		<label class="content_sm popover_title pop_tt_content" style="width:49%"> {{content_base[k][j][7]}}</label><br>
+			  </div>
+			  <div class="content_B_{{k}}_{{j}} hide">
+					<div id="edit_task_B_{{k}}_{{j}}" name="edit_task_B_{{k}}_{{j}}" style="display:none">
+							<input class="form-control popover_height content_sm" type="text" name="Task_name{{content_base[k][j][1]}}" id="Task_name{{k}}_{{j}}" placeholder="Tên công việc" value="{{content_base[k][j][2]}}" style="display: {% if session.username == content_base[k][j][12] %} none {% endif %}" >
+
+					       	<textarea class="form-control popover_height content_sm" style="width:17vw;min-width: 13.5vw; max-height: 200%;display: inline;" type="text" name="Content{{content_base[k][j][1]}}" id="Content{{k}}_{{j}}" placeholder="Nội dung báo cáo">{{content_base[k][j][5]}}</textarea>
+					       	<select style="padding-left:9px;display: {% if session.username == content_base[k][j][12] %}  none {% endif %}" name="type_department{{content_base[k][j][1]}}" id="type_department{{k}}_{{j}}" class="content_sm form-control popover_height box_task_report">
+					       		<option value="" disabled selected hidden>Loại công việc</option>
+						       	{% for r in list_type_department %}
+						       		<option value="{{r}}" {% if r == content_base[k][j][20] %} selected {% endif %}>{{r}}</option>
+						       	{% endfor %}
+					       	</select>
+							      <select name="Percentage{{content_base[k][j][1]}}" id="Percentage{{k}}_{{j}}" class="form-control popover_height content_sm" style="display: inline;padding-left:10px">
+							             <option value="" disabled selected hidden>Ước tính hoàn thành</option>
+							             {% if content_base[k][j][7] %}
+							             {% set percent = (content_base[k][j][7][:-1])|int %}
+							             {% else %}
+							             {% set percent = 0 %}
+							             {% endif %}
+							             {% for i in range(100,percent-5,-5) %}
+			  				             <option value="{{i}}%" {% if content_base[k][j][7] == i|string+'%' %} selected {% endif %}>{{i}}%</option>
+			  				             {% endfor %}
+							      </select>
+					        <br><br>
+					        <input type="text" name="edit_task_event_fake{{content_base[k][j][1]}}" value="{{content_base[k][j][0]}}" style="display:none">
+					        <button type="button" class="btn btn-default btn_edit_del_ok " style="font-weight:bold;margin-top:1vh" id="ok_{{content_base[k][j][1]}}" name="edit_event" value="{{k}}_{{j}}">Xác nhận</button>
+					        <button type="button" class="btn btn-default btn_edit_del_ok " style="font-weight:bold;margin-top:1vh" onclick="task_back_{{k}}_{{j}}()">Hủy</button>
+					    
+					    </div>
+					    <div id="btn_task_edit_{{k}}_{{j}}"> 
+						<button type="button" id="btn_edit_report" class="btn btn-default btn_edit_del_ok " value="" style="font-weight:bold;" onclick="edit_task_B_{{k}}_{{j}}()">Sửa</button>
+						<button type="button" name="delete_event" value="{{content_base[k][j][1]}}" id="btn_edit_report_del_{{content_base[k][j][1]}}" style="font-weight:bold;" class="btn btn-default btn_edit_del_ok ">Xóa</button>
+						<button type="submit" class="btn btn-default btn_edit_del_ok" name="tracking" value="{{content_base[k][j][0]}}" style="font-weight:bold;">Chi tiết</button>
+						<div style="float: right;margin-top: 1.2vh">
+							<button type="submit" name="black" value="{{content_base[k][j][1]}}" id="color_#901d1e" class="button_color B_{{k}}_{{j}}" style="background-color: #901d1e"></button>
+							<button type="submit" name="red" value="{{content_base[k][j][1]}}" id="color_#ff6600" class="button_color B_{{k}}_{{j}}" style="background-color: #ff6600"></button>
+							<button type="submit" name="orange" value="{{content_base[k][j][1]}}" id="color_#056cb9" class="button_color B_{{k}}_{{j}}"  style="background-color:#056cb9"></button>
+							<button type="submit" name="blue" value="{{content_base[k][j][1]}}" id="color_#6fc7b0" class="button_color B_{{k}}_{{j}}" style="background-color: #6fc7b0"></button>
+							<button type="submit" name="green" value="{{content_base[k][j][1]}}" id="color_#6e4375" class="button_color B_{{k}}_{{j}}" style="background-color: #6e4375"></button>
+							<input type="text" value="green" name="get_color_value_{{content_base[k][j][1]}}" id="get_color_value" class="B_{{k}}_{{j}}" style="display: none;">
+						</div>
+						</div>
+				</div>
+			  {% endfor %}
+			</div>
+		</div>
+		{% endfor %}
+
+		<script type="text/javascript">
+			{% for k in range(block_base|length) %}
+				{% for j in range(block_base[k]|length) %}
+						{% for i in range(block_base[k][j][0]|int,block_base[k][j][1]|int) %}
+							try{document.getElementById("task_{{k}}_{{i}}").outerHTML="";}
+							catch(e){}
+						{% endfor %} 
+						var element = document.createElement("div");
+						element.style.width = "{{(block_base[k][j][1]|int-block_base[k][j][0]|int)*(100/(14*12))}}%";
+						element.style.padding = '0';
+						element.style.display = 'inline-block';
+						element.style.height = "65px";
+						element.id = 'task_{{k}}_{{block_base[k][j][1]|int-1}}';
+						element.style.color = "#262626";
+			  			element.style.marginBottom = "1px";
+						element.style.textAlign = 'left';
+						element.style.paddingRight = '0.3vw';
+						element.style.paddingLeft = '0.2vw';
+					    element.style.paddingTop = '0.2vw';
+					    element.style.borderRight = '1px solid #d9d9d9';
+						element.style.borderTop = '5px solid {{content_base[k][j][-1]}}';
+						element.style.background = '#e6e6e6';
+						element.className = "B_{{k}}_{{j}}";
+						element.setAttribute("data-placement","bottom");
+					  	element.style.overflow = 'hidden';
+					  	element.style.whiteSpace = 'nowrap';
+					  	element.style.textOverflow = 'ellipsis';
+						element.innerHTML= 
+						'<p style="font-style:italic" class="B_{{k}}_{{j}} div_inside">Time: {{content_base[k][j][16][:-11]}} - {{content_base[k][j][17][:-11]}}</p>\
+						\
+						<p style="color:black;font-size:10px;margin:0;font-weight:bold;float:left;display:inline-block;width:60%;overflow:hidden;text-overflow:ellipsis" class="B_{{k}}_{{j}}">{{content_base[k][j][2]}}</p>\
+						\
+						<p style="color:black;font-size:9px;margin:0;float:right;display:inline-block;width:39%;overflow:hidden;text-align:right" class="B_{{k}}_{{j}}">{{content_base[k][j][18]}}</p>\
+						\
+						<p class="B_{{k}}_{{j}} div_inside">{{(content_base[k][j][5])|replace("\r\n"," ")|replace("\n"," ")}}</p>\
+											\
+						<p style="font-style:italic" class="B_{{k}}_{{j}} div_inside">Report to: {{content_base[k][j][12]}}</p>';
+						element.style.fontSize ='13px';
+						element.dataHtml = 'true';
+						var nodeafter = document.getElementById("task_{{k}}_{{(block_base[k][j][0]|int-1)}}");
+						nodeafter.parentNode.insertBefore(element,nodeafter.nextSibling);
+				{% endfor %}
+			{% endfor %}
+		</script>
+		<script type="text/javascript">
+
+			//POPOVER TANG HAM 
+			{% for k in range(block_base|length) %}
+				{% for j in range(block_base[k]|length) %}
+
+				$('.B_{{k}}_{{j}}').popover({
+			    html: true,
+			    title: function () {
+			    	// alert('{{k}}_{{j}}')
+			        return $(this).parent().find('.title_B_{{k}}_{{j}}').html();
+			    },
+			    content: function () {
+			    	// alert(2)
+			   		return $(this).parent().find('.content_B_{{k}}_{{j}}').html();
+			    	}       
+				});
+				function edit_task_B_{{k}}_{{j}}(){
+					document.getElementById('edit_task_B_{{k}}_{{j}}').style.display = "";
+					document.getElementById('btn_task_edit_{{k}}_{{j}}').style.display ="none";
+
+				};
+				function task_back_{{k}}_{{j}}(){
+					document.getElementById('edit_task_B_{{k}}_{{j}}').style.display = "none";
+					document.getElementById('btn_task_edit_{{k}}_{{j}}').style.display ="";
+				};
+
+				$(document).on('click','button[id^="color_"]',function() {
+					var id = $(this).attr('id').substring(6,$(this).attr('id').length);
+					var clas = $(this).attr('class').substring(13,$(this).attr('class').length);
+				    // $("div[class^='"+clas+"']").css("border-top-color", id);\
+				    $("input[class^='"+clas+"']").attr('value',id);
+				    // $('#ok').click();
+
+				});
+				{% endfor %}
+			{% endfor %}
+		// // CLICK HTML HIDE POPOVER
+				var btn_clicked_B_once;
+			    $("div[class^='B_']").on('click', function(){
+			    	
+			    	if($(this).attr('id') != btn_clicked_B_once){
+			    	try{
+			    		document.getElementById(btn_clicked_B_once).click();
+			    		}
+					catch(e) {} 
+					btn_clicked_B_once = '';
+					btn_clicked_B_once = $(this).attr('id');
+					}
+					else{btn_clicked_B_once = '';}
+			    });
+		</script>
+
+		<!-- CHEN DE -->
+		<script type="text/javascript">
+			function check_time_task() {
+				var i1 = parseInt(back_id_end.substring(2,back_id_end.length));
+				var i2 = parseInt(back_id_start.substring(2,back_id_start.length));
+				var i3=0;
+				var i4=0;
+				var check_week = 0;
+				var check_time_i = 0;
+				{% for i in range(list_index_week|length) %}
+					if({{i}} < i2-1){
+						i3 += {{list_index_week[i]}}
+					}
+					if({{i}} <= i1-1){
+						i4 += {{list_index_week[i]}}
+					}
+				{% endfor %}
+				{% for i in range(block_base|length) %}
+					{% for j in block_base[i] %}
+						if( {{j[1]}} > i2*{{15/5}} && {{j[1]}} <= i1*{{15/5}} || {{j[0]}} >= i2*{{15/5}} && {{j[0]}} <= i1*{{15/5}} || 
+						{{j[0]}} <= i2*{{15/5}} && {{j[1]}} >= i1*{{15/5}}) {
+						check_time_i += 1;
+					
+						}
+						if(check_time_i > 0){
+							alert("Đã có công việc trong khoảng thời gian này, xin mời chọn thời gian khác.")
+							// if(document.getElementById('select_cong_viec').value == 'cong_viec_moi'){
+							//  	document.getElementById('div_chen_cvmoi').innerHTML = '<p style="color:black;margin-top:1.5vh">Đã có một báo cáo khác trong khoảng thời gian này. Bạn muốn:</p><input type="radio" style="width:1.2vw;height:1.2vh;" name="DE" value="T1" id="radio_1" checked>Báo cáo này chèn vào khoảng thời gian còn trống.<br>\
+							// <input type="radio" style="width:1.2vw;height:1.2vh" name="DE" value="T2" id="radio_2">Báo cáo này đè lên báo cáo cũ.';
+							// }
+							// if(document.getElementById('select_cong_viec').value != 'cong_viec_moi'){
+							// 	document.getElementById('div_chen_cvcu'+ document.getElementById('select_cong_viec').value).innerHTML = '<p style="color:black;margin-top:1.5vh">Đã có một báo cáo khác trong khoảng thời gian này. Bạn muốn:</p><input type="radio" style="width:1.2vw;height:1.2vh;" name="DE" value="T1" id="radio_1" checked>Báo cáo này chèn vào khoảng thời gian còn trống.<br>\
+							// <input type="radio" style="width:1.2vw;height:1.2vh" name="DE" value="T2" id="radio_2">Báo cáo này đè lên báo cáo cũ.';
+							// }
+							back();			
+							check_time_i = 0;
+						}
+					{% endfor %}
+				
+				{% endfor %}
+
+			}
+		</script>
+	</div>
+
+<input type="text" style="display:none" id="start1" name="time_start">
+<input type="text" style="display:none" id="end1" name="time_end">
+</form>
+</div>
+<script type="text/javascript">
+	// DEL AJAX
+	$(document).on("click","button[id^='btn_edit_report_del_']",function(event){
+
+		$.ajax({
+			url: '/ajax_del_event',
+			data : {
+				block_base: $("#block_base").val(),
+				content_base: $("#content_base").val(),
+				delete_event: $(this).val(),
+				
+			},
+			type: 'POST',
+			success: function(response){
+				console.log(response);
+			},
+			error: function(error){
+				console.log(error);
+			}
+		})
+		.done(function(data) {
+			$("#div_t1").empty();
+			$("#div_t1").append(data.data);
+			$("#popover_select_cong_viec").empty();
+			$("#popover_select_cong_viec").append(data.data_2);
+		});
+		event.preventDefault(event);
+		//  
+	});
+
+
+	// EDIT AJAX
+	$(document).on("click","button[id^='ok_']",function(event){
+
+		var id = $(this).val();
+		$.ajax({
+			url: '/ajax_edit_event',
+			data : {
+				block_base: $("#block_base").val(),
+				content_base: $("#content_base").val(),
+				edit_event: $(this).attr("id").substring(3,$(this).attr("id").length),
+				Task_name: $("#Task_name"+id).val(),
+				Content: $("#Content"+id).val(),
+				type_department : $("#type_department"+id).val(),
+				Percentage : $("#Percentage"+id).val(),
+				
+			},	
+			type: 'POST',
+			success: function(response){
+				console.log(response);
+			},
+			error: function(error){
+				console.log(error);
+			}
+		})
+		.done(function(data) {
+			$("#div_t1").empty();
+			$("#div_t1").append(data.data);
+			$("#popover_select_cong_viec").empty();
+			$("#popover_select_cong_viec").append(data.data_2);
+		});
+		event.preventDefault(event);
+		//  
+	});
+</script>
+<script type="text/javascript">
+	// SUBMIT AJAX
+	$(document).on("click","#submit_newtask",function(event){
+
+			if(document.getElementById('task_name_rp').value == "") {
+		      alert("Xin mời nhập tên Công việc.");
+		      document.getElementById('task_name_rp').focus();
+		      return false;
+		    }
+		    if(document.getElementById('job_type_rp').value == "") {
+		      alert("Xin mời chọn loại Công việc.");
+		      document.getElementById('job_type_rp').focus();
+		      return false;
+		    }
+			
+		    if(document.getElementById('percent').value == "") {
+		      alert("Xin mời chọn Ước tính phần trăm hoàn thành.");
+		      document.getElementById('percent').focus();
+		      return false;
+		    }	
+    		back()
+
+    	if($("#radio_1").val()) {
+    		$("#chen_de").val($("#radio_1").val())
+    	}
+    	if($("#radio_2").val()) {
+    		$("#chen_de").val($("#radio_2").val())
+    	}
+		$.ajax({
+			url: '/ajax_add_new_task',
+			data : {
+				block_base: $("#block_base").val(),
+				content_base: $("#content_base").val(),
+				Task_name_rp: $("#task_name_rp").val(),
+				type_department: $("#job_type_rp").val(),
+				Description_rp: $("#content_12").val(),
+				Percentage: $("#percent").val(),
+				time_start: $("#start1").val(),
+				time_end: $("#end1").val(),
+				chen_de: $("#chen_de").val(),
+				
+			},
+			type: 'POST',
+			success: function(response){
+				console.log(response);
+			},
+			error: function(error){
+				console.log(error);
+			}
+		})
+		.done(function(data) {
+			$("#div_t1").empty();
+			$("#div_t1").append(data.data);
+			$("#popover_select_cong_viec").empty();
+			$("#popover_select_cong_viec").append(data.data_2);
+		});
+		event.preventDefault(event);
+		//  
+	});
+
+
+	// ADD_OLD_TASK
+	$(document).on("click","#submit_oldtask",function(event){
+		var id = $("#select_cong_viec").val();
+		// alert(id)
+		if(document.getElementById('Content'+id).value == "") {
+		      alert("Xin mời nhập nội dung Công việc.");
+		      document.getElementById('Content'+id).focus();
+		      return false;
+	    }
+	    if(document.getElementById('Percentage'+id).value == "") {
+	      alert("Xin mời chọn Ước tính phần trăm hoàn thành.");
+	      document.getElementById('Percentage'+id).focus();
+	      return false;
+	    }	
+		back()
+	  	$.ajax({
+		    url: '/ajax_add_old_task',
+		    data : {
+		     	block_base: $("#block_base").val(),
+		      	content_base: $("#content_base").val(),
+		      	Content: $("#Content"+id).val(),
+		      	Percentage: $("#Percentage"+id).val(),
+		      	time_start: $("#start1").val(),
+		      	time_end: $("#end1").val(),
+		      	select_cong_viec: id,
+		      	
+	    	},
+	    	type: 'POST',
+	    	success: function(response){
+	      		console.log(response);
+	    	},
+	    	error: function(error){
+	      		console.log(error);
+	    	}
+	  	})
+	  	.done(function(data) {
+	    	$("#div_t1").empty();
+	    	$("#div_t1").append(data.data);
+	    	$("#popover_select_cong_viec").empty();
+			$("#popover_select_cong_viec").append(data.data_2);
+	  	});
+	  	event.preventDefault(event);
+	  	//  
+	});
+
+	///// COLOR
+	$(document).on("click","button[id^='color_']",function(event){
+	  	$.ajax({
+		    url: '/ajax_add_old_task',
+		    data : {
+		     	block_base: $("#block_base").val(),
+		      	content_base: $("#content_base").val(),
+		      	color: $(this).attr("id").substring(6,$(this).attr("id").length),
+		      	id: $(this).val(),
+	    	},
+	    	type: 'POST',
+	    	success: function(response){
+	      		console.log(response);
+	    	},
+	    	error: function(error){
+	      		console.log(error);
+	    	}
+	  	})
+	  	.done(function(data) {
+	    	$("#div_t1").empty();
+	    	$("#div_t1").append(data.data);
+	    	$("#popover_select_cong_viec").empty();
+			$("#popover_select_cong_viec").append(data.data_2);
+	  	});
+	  	event.preventDefault(event);
+	  	//  
+	});
+</script>
+<!-- CALENDAR -->
+<script type="text/javascript">
+	var list_weekday = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+	var list_month = ['6','7','8','9','10','11','12','1','2','3','4','5','6','7','8','9','10','11','12'];
+	var list_3 = ['&nbsp;','&nbsp;'];
+	var list_4 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_5 = [];
+	var list_6 = ['&nbsp;','&nbsp;','&nbsp;'];
+	var list_7 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_8 = ['&nbsp;'];
+	var list_9 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_10 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_11 = ['&nbsp;','&nbsp;'];
+	var list_12 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_4_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_6_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_9_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_11_18 = ['&nbsp;','&nbsp;','&nbsp;'];
+	var list_2_18 = ['&nbsp;','&nbsp;','&nbsp;'];
+	var list_1_18 = [];
+	var list_3_18 = ['&nbsp;','&nbsp;','&nbsp;'];
+	var list_5_18 = ['&nbsp;'];
+	var list_7_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+	var list_8_18 = ['&nbsp;','&nbsp;'];
+	var list_10_18 = [];
+	var list_12_18 = ['&nbsp;','&nbsp;','&nbsp;','&nbsp;','&nbsp;'];
+
+	{% for i in range(1,31) %}
+		list_4.push("{{i}}");
+		list_6.push("{{i}}");
+		list_9.push("{{i}}");
+		list_11.push("{{i}}");
+		list_4_18.push("{{i}}");
+		list_6_18.push("{{i}}");
+		list_9_18.push("{{i}}");
+		list_11_18.push("{{i}}");
+	{% endfor %}
+	{% for i in range(1,29) %}
+		list_2_18.push("{{i}}");
+	{% endfor %}	
+	{% for i in range(1,32) %}
+		list_3.push("{{i}}");
+		list_5.push("{{i}}");
+		list_7.push("{{i}}");
+		list_8.push("{{i}}");
+		list_10.push("{{i}}");
+		list_12.push("{{i}}");
+		list_1_18.push("{{i}}");
+		list_3_18.push("{{i}}");
+		list_5_18.push("{{i}}");
+		list_7_18.push("{{i}}");
+		list_8_18.push("{{i}}");
+		list_10_18.push("{{i}}");
+		list_12_18.push("{{i}}");
+	{% endfor %}
+	{% for i in range(11) %}
+		list_5.push('&nbsp;');
+		list_1_18.push('&nbsp;');
+		list_2_18.push('&nbsp;');
+		list_10_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(9) %}
+		list_3.push('&nbsp;');
+		list_6.push('&nbsp;');
+		list_8_18.push('&nbsp;');
+		list_11_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(6) %}
+		list_7.push('&nbsp;');
+		list_4_18.push('&nbsp;');
+		list_12_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(10) %}
+		list_8.push('&nbsp;');
+		list_5_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(8) %}
+		list_9.push('&nbsp;');
+		list_3_18.push('&nbsp;');
+		list_6_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(5) %}
+		list_10.push('&nbsp;');
+		list_7_18.push('&nbsp;');
+	{% endfor %}
+	{% for i in range(10) %}
+		list_11.push('&nbsp;')
+	{% endfor %}
+	{% for i in range(7) %}
+		list_4.push('&nbsp;')
+		list_12.push('&nbsp;')
+		list_9_18.push('&nbsp;')
+	{% endfor %}
+
+	var list_day_in_month_2017 = [[],[],[],list_3,list_4,list_5,list_6,list_7, list_8 ,list_9 ,list_10 ,list_11 ,list_12]
+
+	var list_day_in_month_2018 = [[],list_1_18,list_2_18,list_3_18,list_4_18,list_5_18,list_6_18,list_7_18,list_8_18,list_9_18,list_10_18,list_11_18,list_12_18]
+	var list_month = []
+	var today = new Date()
+	var dd = today.getDate()
+	var mm = today.getMonth()+1
+	var yyyy = today.getFullYear()
+	var month_selected
+	var year_selected
+
+	$("#mmdd").text({{month}}+'/'+{{year}})
+	if({{year}} == 2017) {
+		list_day_in_month = list_day_in_month_2017
+	}
+	else if({{year}} == 2018) {
+		list_day_in_month = list_day_in_month_2018
+	}
+
+	$.each(list_day_in_month[{{month}}],function(i,r) {
+		if(r == dd && {{month}} == mm) {
+			$("#row_3").append('<button type="submit" style="background-color:#901d1e;color:white;border:1px solid #901d1e;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+		}
+		else if(r == {{day}}){
+			$("#row_3").append('<button type="submit" style="border:1px solid black;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+		}
+		else if(r == '&nbsp;') {
+			$("#row_3").append('<button type="button" class="calendar" disabled>'+r+'</button>')
+		}
+		else{
+			$("#row_3").append('<button type="submit" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+		}
+	});
+	
+	$("#next_month").click(function() {
+		month_selected = $("#mmdd").text().split("/")[0]
+		year_selected = $("#mmdd").text().split("/")[1]
+		// alert(year_selected)
+		if(year_selected == 2017){
+			if(parseInt(month_selected) < 12){
+				yyyy = 2017
+				$("#mmdd").text(parseInt(month_selected)+1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2017			
+			}else if(parseInt(month_selected) == 12) {
+				month_selected = 0
+				yyyy = 2018
+				$("#mmdd").text(parseInt(month_selected)+1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2018			
+			}
+
+		}else if(year_selected == 2018) {
+			yyyy = 2018
+			if(parseInt(month_selected) < 12){				
+				$("#mmdd").text(parseInt(month_selected)+1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2018		
+			}
+		}
+		$.each(list_day_in_month[parseInt(month_selected)+1],function(i,r) {
+			if(r == dd && parseInt(month_selected)+1 == mm) {
+				$("#row_3").append('<button type="submit" style="background-color:#901d1e;color:white;border:1px solid #901d1e;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+			}
+			else if(r == {{day}} && parseInt(month_selected)+1 == {{month}}){
+				$("#row_3").append('<button type="submit" style="border:1px solid black;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+			}
+			else if(r == '&nbsp;') {
+				$("#row_3").append('<button type="button" class="calendar" disabled>'+r+'</button>')
+			}
+			else {
+				$("#row_3").append('<button type="submit" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+			}			
+		})		
+
+	});
+	$("#previous_month").click(function() {
+		month_selected = $("#mmdd").text().split("/")[0]
+		year_selected = $("#mmdd").text().split("/")[1]
+		if(year_selected == 2017){
+			yyyy = 2017
+			if(parseInt(month_selected) > 1){
+				$("#mmdd").text(parseInt(month_selected)-1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2017		
+			}
+		}
+		else if(year_selected == 2018) {
+			
+			if(parseInt(month_selected) > 1) {
+				yyyy = 2018
+				$("#mmdd").text(parseInt(month_selected)-1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2018
+				
+			}else if(parseInt(month_selected) == 1) {
+				month_selected = 13
+				yyyy = 2017
+				$("#mmdd").text(parseInt(month_selected)-1+"/"+yyyy)
+				$("#row_3").empty()
+				list_day_in_month = list_day_in_month_2017
+			}
+		}	
+
+		$.each(list_day_in_month[parseInt(month_selected)-1],function(i,r) {
+				if(r == dd && parseInt(month_selected)-1 == mm) {
+					$("#row_3").append('<button type="submit" style="background-color:#901d1e;color:white;border:1px solid #901d1e;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+				}
+				else if(r == {{day}} && parseInt(month_selected)-1 == {{month}}){
+					$("#row_3").append('<button type="submit" style="border:1px solid black;font-weight:bold;" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+				}
+				else if(r == '&nbsp;') {
+					$("#row_3").append('<button type="button" class="calendar" disabled>'+r+'</button>')
+				}
+				else {
+					$("#row_3").append('<button type="submit" name="select_day" value="'+String(r)+'/'+$("#mmdd").text()+'" class="calendar">'+r+'</button>')
+				}
+			})
+
+	});
+</script>
+
+
+<script type="text/javascript">
+	function check_percent() {
+		{% for i in range(old_task|length) %}
+			if(document.getElementById('select_cong_viec').value ==  '{{old_task[i][0]}}'){
+				{% if old_task[i][2] != None %}
+					{% set per = old_task[i][2][:-1]|int %}	
+				{% else %}
+					{% set per = 100 %}
+				{% endif %}
+				document.getElementById('per_{{old_task[i][0]}}').innerHTML = "<select name='Percentage{{old_task[i][0]}}' id='Percentage{{old_task[i][0]}}'  class='form-control popover_height content_sm' style='display: inline;padding-left:10px'>\
+			             <option value='' disabled selected hidden>Ước tính hoàn thành</option>\
+			             {% for j in range(100,per-5,-5) %}\
+			             <option value='{{j}}%'>{{j}}%</option>\
+			             {% endfor %}\
+			      </select>";
+			}
+		{% endfor %}
+	}
+</script>
+
+<script type="text/javascript">
+
+	var count_click_popover = 0;
+	var list_click_popover = [];
+	var back_id_end;
+	var back_id_start;
+	var list_button = [];   
+	{% for i in range(1,range_time +1) %}
+		list_button.push({{i}});
+	{% endfor %}
+	var list_select = [];
+	var x = 0;
+	function f1(event) {
+		console.log(list_button)
+		var evt =  event.target.id || event.srcElement.id;
+		list_button[parseInt(evt)-1] = evt+"*";
+
+
+		for(i=0;i<= list_button.length;i++){
+			if(String(list_button[i])[String(list_button[i]).length-1] == '*'){
+				var a =document.getElementById(i+1);
+				a.style.background = 'white';
+				a.value = i+1;
+				list_button[i] = evt;
+				if(a.value != list_select[0]){
+				list_select.push(a.value);
+				x+=1;
+				};
+			};
+		};
+				
+		if(x%2 == 0){
+			j=parseInt(list_select[0])
+			j2=parseInt(list_select[1])
+			list_left = []
+			list_right = []
+			document.getElementById('start1').value = j
+			document.getElementById('end1').value = j2 + 1
+
+			for(r=j;r<j2+1;r++){
+				if(document.getElementById(r).disabled == true){
+					list_left.push(r);
+					break;
+				}
+			}
+			for(r=j2+1;r>j;r--){
+				if(document.getElementById(r).disabled == true){
+					list_right.push(r);
+					break;
+				}
+			}
+			if(parseInt(list_select[0]) > parseInt(a.value)){
+				alert('Thời gian bắt đầu phải trước thời gian kết thúc.');
+				document.getElementById(list_select[0]).style.background = '#666666';
+				document.getElementById(list_select[1]).style.background = '#666666';
+				list_select = [];	
+			}
+			// CHAN NHAP NGHI TRUA			
+			else if( 
+					(21 <parseInt(list_select[0]) && 27 >parseInt(list_select[0])) ||
+					(21 <parseInt(list_select[1]) && 27 >parseInt(list_select[1])) ||
+					(21 > parseInt(list_select[0]) && 27 < parseInt(list_select[1]))
+
+				) {
+				alert('Xin mời chọn thời gian khác giờ nghỉ trưa.');
+				document.getElementById(list_select[0]).style.background = '#666666';
+				document.getElementById(list_select[1]).style.background = '#666666';
+				list_select = [];
+			}
+			else if(list_left[0] == null){	
+				for(j; j<j2+1 ;j++){
+					document.getElementById(j).style.background = 'white';
+					document.getElementById(j).disabled = true;
+				};
+				back_id_end = 'cc'+list_select[1];
+				back_id_start = 'cc'+list_select[0];
+				document.getElementById('cc'+list_select[1]).click();
+
+				count_click_popover = 1;
+				
+				list_select = [];	
+			}
+			
+			else {
+				alert('Khong duoc chon trong khoang nay');
+				document.getElementById(list_select[0]).style.background = '#666666';
+				document.getElementById(list_select[1]).style.background = '#666666';
+				document.getElementById(j2).disabled = false;
+				document.getElementById(j).disabled = false;
+				list_select = [];
+			};
+		};
+		// KHONG CHO MO 2 LAN
+		if(count_click_popover == 1){
+			for(j=1;j<{{range_time +1}};j++){
+				if(document.getElementById(j).disabled == false){
+					list_click_popover.push(j);
+					document.getElementById(j).disabled = true;
+					}
+				}
+			}
+		};
+</script>
+
+<script type="text/javascript">
+	{% for k in range(block_base|length) %}
+		$('.N_{{content_base[k][0][0]}}').popover({
+	    html: true,
+	    title: function () {
+	        return $(this).parent().find('.title_task_123').html();
+	    },
+	    content: function () {
+	   		return $(this).parent().find('.content_task_123').html();
+	    	}       
+		});
+	{% endfor %}
+</script>
+
+<script>
+	$('.trigger').popover({
+	    html: true,
+	    content: function () {
+	    	return $(this).parent().find('.select_report_task').html();
+	    },
+	});
+
+	function chon_cong_viec() {
+	    if (document.getElementById('select_cong_viec').value == "cong_viec_moi")
+	    {
+		    document.getElementById('input_cong_viec_moi').style.display = "";
+		    document.getElementById('chon_cong_viec').style.display = "none";
+	    }
+	    else
+	    {
+		    document.getElementById('input_cong_viec_cu' + document.getElementById('select_cong_viec').value).style.display = "";
+		    document.getElementById('chon_cong_viec').style.display = "none";
+	    }
+	};
+////TANG TREN
+	{% for r in range(block_floor|length) %}
+		{% for j in range(block_floor[r]|length) %}
+			{% for i in range(block_floor[r][j][0]|int,block_floor[r][j][1]|int) %}
+			  	try{document.getElementById("{{r}}_floor{{i}}").outerHTML="";}
+			catch(e){}
+			{% endfor %}
+				var element = document.createElement("div");
+				element.style.padding = '0';
+				element.style.display = 'inline-block';
+				// element.style.height = "66px";
+				element.id = '{{r}}_floor{{block_floor[r][j][1]|int -1}}';
+				element.style.width = "{{(block_floor[r][j][1]|int-block_floor[r][j][0]|int)*(100/(14*12))}}%";
+				element.style.color = "#262626";
+				element.style.border = "none";
+				element.style.outline = 'none';
+				element.style.textAlign = 'left';
+				element.style.paddingLeft = '0.2vw';
+				element.style.paddingTop = '0.2vw';
+				element.style.paddingRight = '0.3vw';
+				// element.style.marginBottom = "4px";
+				{% if content_floor[r][j][0] == session['task_id'] %}
+					element.style.borderTop = "5px solid #901e1d";	
+					setTimeout(function() {
+						$("#{{r}}_floor{{block_floor[r][j][1]|int -1}}").css('border-top-color','white');
+					},300)
+					setTimeout(function() {
+						$("#{{r}}_floor{{block_floor[r][j][1]|int -1}}").css('border-top-color','#901e1d');
+					},600)
+					setTimeout(function() {
+						$("#{{r}}_floor{{block_floor[r][j][1]|int -1}}").css('border-top-color','white');
+					},900)
+					setTimeout(function() {
+						$("#{{r}}_floor{{block_floor[r][j][1]|int -1}}").css('border-top-color','#901e1d');
+					},1200)
+					setTimeout(function() {
+						$("#{{r}}_floor{{block_floor[r][j][1]|int -1}}").css('border-top-color','white');
+					},1500)	
+					setTimeout(function() {
+						$("#{{r}}_floor{{block_floor[r][j][1]|int -1}}").css('border-top-color','#901e1d');
+					},1800)				
+				{% else %}
+					element.style.borderTop = "5px solid {{content_floor[r][j][-1]}}";
+				{% endif %}
+				setTimeout(function() {
+					$("#{{r}}_floor{{block_floor[r][j][1]|int -1}}").css('border-top-color','{{content_floor[r][j][-1]}}');
+				},2100)
+
+				element.style.borderRight = '1px solid #d9d9d9';
+				element.style.background = '#e6e6e6';
+				element.className = 'floor_{{r+2}}_{{j}}';
+				element.setAttribute("data-html",true);
+				element.setAttribute("data-placement","bottom")
+				element.style.overflow = 'hidden';
+				element.style.whiteSpace = 'nowrap';
+				element.style.textOverflow = 'ellipsis';
+				element.innerHTML= '<p style="font-style:italic" class="floor_{{r+2}}_{{j}} div_inside">Time: {{content_floor[r][j][15][:-11]}} - {{content_floor[r][j][16][:-11]}}</p>\
+					<p style="font-weight:bold" class="floor_{{r+2}}_{{j}} div_inside">{{content_floor[r][j][1]}}</p>\
+					<p class="floor_{{r+2}}_{{j}} div_inside">{{(content_floor[r][j][4])|replace("\r\n"," ")|replace("\n"," ")}}</p>\
+					<p style="font-style:italic" class="floor_{{r+2}}_{{j}} div_inside">Assign by: {{content_floor[r][j][11]}}</p>';
+				element.style.fontSize ='13px';
+				var nodeafter =  document.getElementById("{{r}}_floor{{(block_floor[r][j][0]|int-1)}}");
+				nodeafter.parentNode.insertBefore(element, nodeafter.nextSibling);
+		{% endfor %}
+	{% endfor %}
+</script>
+
+<script type="text/javascript">
+	// POPOVER FLOOR 
+	{% for r in range(block_floor|length) %}
+		{% for j in range(block_floor[r]|length) %}
+			{% for i in range(block_floor[r][j][0]|int,block_floor[r][j][1]|int) %}
+			$('.floor_{{r+2}}_{{j}}').popover({
+		    html: true,
+		    title: function () {
+		        return $(this).parent().find('.title_floor_{{r+2}}_{{j}}').html();
+		    },
+		    content: function () {
+		   		return $(this).parent().find('.content_floor_{{r+2}}_{{j}}').html();
+		    	}          
+			});
+		{% endfor %}
+	{% endfor %}
+	{% endfor %}
+
+// // CLICK HTML HIDE POPOVER
+	var btn_clicked_floor_once;
+	var btn_clicked_B = [];
+
+   	
+    $("div[class^='floor_']").on('click', function(){
+    	
+    	if($(this).attr('id') != btn_clicked_floor_once){
+    		try{
+    		document.getElementById(btn_clicked_floor_once).click();
+    		}
+		catch(e) {} 
+		btn_clicked_floor_once = '';
+		btn_clicked_floor_once = $(this).attr('id');
+	}else{btn_clicked_floor_once = '';}
+    });
+    
+    $('html').on('click', function(e) {
+    	if (typeof $(e.target).data('original-title') == 'undefined' && !$(e.target).parents().is('.popover.in')) {
+    			try{
+    			document.getElementById(btn_clicked_B_once).click();
+    			
+    			}
+    			catch(e) {} 
+    			try{
+    			document.getElementById(btn_clicked_floor_once).click();
+    			}
+    			catch(e) {} 
+    		btn_clicked_B_once = '';
+    		btn_clicked_floor_once = '';
+
+    	};
+    });
+</script>
+<script type="text/javascript">
+	document.getElementById('all').style.display = "";
+</script>
+
+<script type="text/javascript">	
+	{% for i in range(old_task|length) %}
+	function checkForm_report_CVcu_{{i}}(form){
+			if(document.getElementById('Content{{old_task[i][0]}}').value == "") {
+		      alert("Xin mời nhập nội dung Công việc.");
+		      document.getElementById('Content{{old_task[i][0]}}').focus();
+		      return false;
+		    }
+		    if(document.getElementById('Percentage{{old_task[i][0]}}').value == "") {
+		      alert("Xin mời chọn Ước tính phần trăm hoàn thành.");
+		      document.getElementById('Percentage{{old_task[i][0]}}').focus();
+		      return false;
+		    }		
+		    return true;	      
+	}
+	{% endfor %}
+	
+</script>
+
+<!-- CHECK TIME  -->
+<script type="text/javascript">
+	// CHECK +2 CHAN NGAY SAu
+	if((new Date()).getDay() == 5 || (new Date()).getDay() == 6){
+		if (new Date(parseInt("{{day_selected}}".substring(0,4)),parseInt("{{day_selected}}".substring(5,7))-1,parseInt("{{day_selected}}".substring(8,10)) - 3) > new Date()) 
+		{
+			{% for i in range(1,range_time+1) %}
+				document.getElementById({{i}}).disabled = true ;
+				document.getElementById({{i}}).style.backgroundColor ='black';
+			{% endfor %}
+		}
+	}
+	else {
+		if (new Date(parseInt("{{day_selected}}".substring(0,4)),parseInt("{{day_selected}}".substring(5,7))-1,parseInt("{{day_selected}}".substring(8,10)) - 2) > new Date()) 
+		{
+			{% for i in range(1,range_time+1) %}
+				document.getElementById({{i}}).disabled = true ;
+				document.getElementById({{i}}).style.backgroundColor ='black';
+			{% endfor %}
+		}
+
+	}
+	
+	// CHECK -3 CHAN NGAY TRUOC
+	if((new Date()).getDay() == 1 || (new Date()).getDay() == 2){
+		// alert(1)
+		if (new Date(parseInt("{{day_selected}}".substring(0,4)), parseInt("{{day_selected}}".substring(5,7))-1, parseInt("{{day_selected}}".substring(8,10)) + 5) < new Date()) 
+		{
+			{% for i in range(1,range_time+1) %}
+				document.getElementById({{i}}).disabled = true ;
+				document.getElementById({{i}}).style.backgroundColor ='black';
+			{% endfor %}
+		}
+	}
+	else{
+		if (new Date(parseInt("{{day_selected}}".substring(0,4)), parseInt("{{day_selected}}".substring(5,7))-1, parseInt("{{day_selected}}".substring(8,10)) + 4) < new Date()) 
+		{
+			{% for i in range(1,range_time+1) %}
+				document.getElementById({{i}}).disabled = true ;
+				document.getElementById({{i}}).style.backgroundColor ='black';
+			{% endfor %}
+		}
+	}
+	
+</script>
+
+{% endblock %}

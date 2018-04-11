@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Quản lý thông tin cá nhân</title>
+        <!-- <meta name="viewport" content="width=device-width, initial-scale=1"> -->
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+        <meta name="viewport" content="width=device-width" />
+        <!-- <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css"> -->
+        <link rel="stylesheet" href="static/css/bootstrap.min.css">
+        <script src="static/js/jquery-3.2.1.js"></script>
+        <script src="static/js/bootstrap.min.js"></script>
+        <style type="text/css">
+            body {background-color: #f2f2f2}
+            .base {margin-bottom: 5vh;margin-top: 4vh}
+            tr.ds_user:hover, tr.other_user:hover {background-color: #f2f2f2}
+            td {padding-bottom: 7.5px;padding-top: 7.5px;padding-left: 7.5px}
+            ul {list-style-type: none}
+            .img {border-radius: 100%;height: 2.5em;width: 2.5em;vertical-align: middle;text-align: center;line-height: 35px;font-weight: bold;padding-left: 0;padding-right:3px;}
+            .img_large {border-radius: 100%;height: 5em;width: 5em;vertical-align: middle;text-align: center;line-height: 75px;background-color: #901e1d;color: white;font-weight: bold;font-size: 95%}
+            .giant_div {margin-top: 20vh !important;margin: auto; border:1px solid lightgrey;border-radius: 6px;width:35%;background-color: #ffffff;margin-bottom: 20vh !important;height: 600px}
+            #login,#tennguoidung {margin-bottom: 2vh }
+            .name {font-weight: normal;font-size: 110%}
+            .title {font-size: 140%;font-weight: bold;text-align: left;}
+            .form-control {width: 50%}
+            .email {font-size: 95%;font-style: italic;}
+            .btn {width: 25%;font-weight: bold}
+            .btn-grey {background-color: #999999;color: white;border: 1px solid #808080}
+            .btn-grey:hover {background-color: #666666;color: white}
+            .infor {padding-left: 1vw}
+            .line {display: table-cell;margin: auto}
+
+        </style>
+        <style type="text/css">
+            .cssload-container *, .cssload-container *:before, .cssload-container *:after{
+                box-sizing: border-box;
+                    -o-box-sizing: border-box;
+                    -ms-box-sizing: border-box;
+                    -webkit-box-sizing: border-box;
+                    -moz-box-sizing: border-box;
+            }
+
+            .cssload-container {
+                margin-top: 1vh;
+                /*margin: 49px auto;*/
+                width: auto !important;
+                height: auto;
+            }
+            .cssload-container > div {
+                float: left;
+                background: #cc0000;
+                height: 2px;
+                width: 13.6px;
+                margin-right: 1px;
+                display: inline-block;
+            }
+
+            .cssload-container .cssload-shaft1 {
+                animation-delay: 0.06s;
+                    -o-animation-delay: 0.06s;
+                    -ms-animation-delay: 0.06s;
+                    -webkit-animation-delay: 0.06s;
+                    -moz-animation-delay: 0.06s;
+            }
+            .cssload-container .cssload-shaft2 {
+                animation-delay: 0.12s;
+                    -o-animation-delay: 0.12s;
+                    -ms-animation-delay: 0.12s;
+                    -webkit-animation-delay: 0.12s;
+                    -moz-animation-delay: 0.12s;
+            }
+            .cssload-container .cssload-shaft3 {
+                animation-delay: 0.17s;
+                    -o-animation-delay: 0.17s;
+                    -ms-animation-delay: 0.17s;
+                    -webkit-animation-delay: 0.17s;
+                    -moz-animation-delay: 0.17s;
+            }
+            .cssload-container .cssload-shaft4 {
+                animation-delay: 0.23s;
+                    -o-animation-delay: 0.23s;
+                    -ms-animation-delay: 0.23s;
+                    -webkit-animation-delay: 0.23s;
+                    -moz-animation-delay: 0.23s;
+            }
+            .cssload-container .cssload-shaft5 {
+                animation-delay: 0.29s;
+                    -o-animation-delay: 0.29s;
+                    -ms-animation-delay: 0.29s;
+                    -webkit-animation-delay: 0.29s;
+                    -moz-animation-delay: 0.29s;
+            }
+            .cssload-container .cssload-shaft6 {
+                animation-delay: 0.35s;
+                    -o-animation-delay: 0.35s;
+                    -ms-animation-delay: 0.35s;
+                    -webkit-animation-delay: 0.35s;
+                    -moz-animation-delay: 0.35s;
+            }
+            .cssload-container .cssload-shaft7 {
+                animation-delay: 0.4s;
+                    -o-animation-delay: 0.4s;
+                    -ms-animation-delay: 0.4s;
+                    -webkit-animation-delay: 0.4s;
+                    -moz-animation-delay: 0.4s;
+            }
+            .cssload-container .cssload-shaft8 {
+                animation-delay: 0.46s;
+                    -o-animation-delay: 0.46s;
+                    -ms-animation-delay: 0.46s;
+                    -webkit-animation-delay: 0.46s;
+                    -moz-animation-delay: 0.46s;
+            }
+            .cssload-container .cssload-shaft9 {
+                animation-delay: 0.52s;
+                    -o-animation-delay: 0.52s;
+                    -ms-animation-delay: 0.52s;
+                    -webkit-animation-delay: 0.52s;
+                    -moz-animation-delay: 0.52s;
+            }
+            .cssload-container .cssload-shaft10 {
+                animation-delay: 0.58s;
+                    -o-animation-delay: 0.58s;
+                    -ms-animation-delay: 0.58s;
+                    -webkit-animation-delay: 0.58s;
+                    -moz-animation-delay: 0.58s;
+            }
+            .cssload-container .cssload-shaft11 {
+                animation-delay: 0.64s;
+                    -o-animation-delay: 0.64s;
+                    -ms-animation-delay: 0.64s;
+                    -webkit-animation-delay: 0.64s;
+                    -moz-animation-delay: 0.64s;
+            }
+            .cssload-container .cssload-shaft12 {
+                animation-delay: 0.70s;
+                    -o-animation-delay: 0.70s;
+                    -ms-animation-delay: 0.70s;
+                    -webkit-animation-delay: 0.70s;
+                    -moz-animation-delay: 0.70s;
+            }
+            .cssload-container .cssload-shaft13 {
+                animation-delay: 0.76s;
+                    -o-animation-delay: 0.76s;
+                    -ms-animation-delay: 0.76s;
+                    -webkit-animation-delay: 0.76s;
+                    -moz-animation-delay: 0.76s;
+            }
+            .cssload-container .cssload-shaft14 {
+                animation-delay: 0.82s;
+                    -o-animation-delay: 0.82s;
+                    -ms-animation-delay: 0.82s;
+                    -webkit-animation-delay: 0.82s;
+                    -moz-animation-delay: 0.82s;
+            }
+            .cssload-container .cssload-shaft15 {
+                animation-delay: 0.88s;
+                    -o-animation-delay: 0.88s;
+                    -ms-animation-delay: 0.88s;
+                    -webkit-animation-delay: 0.88s;
+                    -moz-animation-delay: 0.88s;
+            }
+            .cssload-container .cssload-shaft16 {
+                animation-delay: 0.94s;
+                    -o-animation-delay: 0.94s;
+                    -ms-animation-delay: 0.94s;
+                    -webkit-animation-delay: 0.94s;
+                    -moz-animation-delay: 0.94s;
+            }
+            .cssload-container .cssload-shaft17 {
+                animation-delay: 1s;
+                    -o-animation-delay: 1s;
+                    -ms-animation-delay: 1s;
+                    -webkit-animation-delay: 1s;
+                    -moz-animation-delay: 1s;
+            }
+            .cssload-container .cssload-shaft18 {
+                animation-delay: 1.06s;
+                    -o-animation-delay: 1.06s;
+                    -ms-animation-delay: 1.06s;
+                    -webkit-animation-delay: 1.06s;
+                    -moz-animation-delay: 1.06s;
+            }
+            .cssload-container .cssload-shaft19 {
+                animation-delay: 1.12s;
+                    -o-animation-delay: 1.12s;
+                    -ms-animation-delay: 1.12s;
+                    -webkit-animation-delay: 1.12s;
+                    -moz-animation-delay: 1.12s;
+            }
+             .cssload-container .cssload-shaft20 {
+                animation-delay: 1.18s;
+                    -o-animation-delay: 1.18s;
+                    -ms-animation-delay: 1.18s;
+                    -webkit-animation-delay: 1.18s;
+                    -moz-animation-delay: 1.18s;
+            }
+
+            .cssload-container {
+                width: auto;
+            }
+            .cssload-container > div {
+                height: 1.5px;
+                margin-right: 0;
+                animation: cssload-wave 1.15s infinite ease-in-out;
+                    -o-animation: cssload-wave 1.15s infinite ease-in-out;
+                    -ms-animation: cssload-wave 1.15s infinite ease-in-out;
+                    -webkit-animation: cssload-wave 1.15s infinite ease-in-out;
+                    -moz-animation: cssload-wave 1.15s infinite ease-in-out;
+            }
+
+
+
+            @keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    transform: translateX"("-10px")";
+                }
+            }
+
+            @-o-keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    -o-transform: translateX"("-10px")";
+                }
+            }
+
+            @-ms-keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    -ms-transform: translateX"("-10px")";
+                }
+            }
+
+            @-webkit-keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    -webkit-transform: translateX"("-10px")";
+                }
+            }
+
+            @-moz-keyframes cssload-wave {
+                80% {
+                    background:grey;
+                    margin-right: 5px;
+                    -moz-transform: translateX"("-10px")";
+                }
+            }
+        </style>
+        <script type=text/javascript>
+            var $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
+        </script>
+        <script type="text/javascript">
+            $(document).keydown(function(event) {
+            if (event.ctrlKey==true && (event.which == '61' || event.which == '107' || event.which == '173' || event.which == '109'  || event.which == '187'  || event.which == '189'  ) ) {
+                    event.preventDefault();
+                 }
+                // 107 Num Key  +
+                // 109 Num Key  -
+                // 173 Min Key  hyphen/underscor Hey
+                // 61 Plus key  +/= key
+            });
+
+            $(window).bind('mousewheel DOMMouseScroll', function (event) {
+                   if (event.ctrlKey == true) {
+                   event.preventDefault();
+                   }
+            });
+        </script>
+    </head>
+    {% set list_color = ['#901e1d','#633517','#e06000','#457725','#00477e','grey']%}
+    <body>
+    <form class="form-inline" method="POST" id="bang1" id="form1">
+        <form>
+            <div class="giant_div">
+                <!-- Danh sach Users -->
+                <!-- <div class="w3-display-container mySlides">
+                    <center>
+                        <div class="base">
+                            <table id="user">
+                                <tr>
+                                    <td colspan="2" style="padding-top: 0;padding-left: 0"><div style="font-weight: bold; color:#47484a;font-size: 140%">Automatic Authentication <span style="color:  #cc0000">Gateway</span></div>
+                                    <div class="cssload-container">
+                                        <div class="cssload-shaft1"></div>
+                                        <div class="cssload-shaft2"></div>
+                                        <div class="cssload-shaft3"></div>
+                                        <div class="cssload-shaft4"></div>
+                                        <div class="cssload-shaft5"></div>
+                                        <div class="cssload-shaft6"></div>
+                                        <div class="cssload-shaft7"></div>
+                                        <div class="cssload-shaft8"></div>
+                                        <div class="cssload-shaft9"></div>
+                                        <div class="cssload-shaft10"></div>
+                                        <div class="cssload-shaft11"></div>
+                                        <div class="cssload-shaft12"></div>
+                                        <div class="cssload-shaft13"></div>
+                                        <div class="cssload-shaft14"></div>
+                                        <div class="cssload-shaft15"></div>
+                                        <div class="cssload-shaft16"></div>
+                                        <div class="cssload-shaft17"></div>
+                                        <div class="cssload-shaft18"></div>
+                                        <div class="cssload-shaft19"></div>
+                                        <div class="cssload-shaft20"></div>
+                                    </div>
+                                    </td>
+                                </tr>
+
+                                <tr >
+                                    <td colspan="2" style="padding-top: 0 !important;padding-left: 0 !important"><span>We can't recognize you, please choose </span></td>
+                                </tr>
+                                <tr> <td colspan="2"></td> </tr>
+                                <tr> <td colspan="2"></td> </tr>
+                                {% for i in range(ds_user_mac|length) %}
+                                <tr class="ds_user avatar_{{ds_user_mac[i][4]}}" onclick="plusDivs(2)" id="acc_{{ds_user_mac[i][3]}}_{{list_color[i]}}">
+                                    <td><div class="img" style="background-color:{{list_color[i]}};color:white;">{{ds_user_mac[i][4]}}</div></td>
+                                    <td class="infor"><span class="name">{{ds_user_mac[i][1]}}</span><br> <span class="email">{{ds_user_mac[i][2]}}</span><br></td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="other_user" id="another_account" onclick="plusDivs(1)">
+                                    <td><div class="img"><img src="static/images/Picture1.png" width="35" height="35"></div></td>
+                                    <td class="infor"><span>Another account</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </center>
+                </div> -->
+                <!-- End Danh sach Users -->
+
+                <!-- Nhap Username -->
+                <div class="w3-display-container mySlides">
+                    <center>
+                        <div class="base">
+                            <div style="font-weight: bold; color:#47484a;font-size: 140%;margin-bottom: 1vh">Automatic Authentication <span style="color:  #cc0000">Gateway</span></div>
+                            <div class="cssload-container" style="display: table-cell;margin: auto">
+                                <div class="cssload-shaft1"></div>
+                                <div class="cssload-shaft2"></div>
+                                <div class="cssload-shaft3"></div>
+                                <div class="cssload-shaft4"></div>
+                                <div class="cssload-shaft5"></div>
+                                <div class="cssload-shaft6"></div>
+                                <div class="cssload-shaft7"></div>
+                                <div class="cssload-shaft8"></div>
+                                <div class="cssload-shaft9"></div>
+                                <div class="cssload-shaft10"></div>
+                                <div class="cssload-shaft11"></div>
+                                <div class="cssload-shaft12"></div>
+                                <div class="cssload-shaft13"></div>
+                                <div class="cssload-shaft14"></div>
+                                <div class="cssload-shaft15"></div>
+                                <div class="cssload-shaft16"></div>
+                                <div class="cssload-shaft17"></div>
+                                <div class="cssload-shaft18"></div>
+                                <div class="cssload-shaft19"></div>
+                                <div class="cssload-shaft20"></div>
+                            </div>
+                            <div id="mailbox" style="padding-top: 20px">
+                                <div style="margin-bottom: 3vh"><span class="title">Login </span></div>
+                                <div class="" id="" style="font-size: 40px;height: 75px;width: 75px;padding-bottom: 10vh;margin-bottom: 2vh"><img src="static/images/Picture1.png" width="75" height="75"></div>
+                                <input placeholder="Enter your username" type="text" name="username" class="form-control" id="username" value="">
+                            </div><br>
+                            <div>
+                                <button class="btn btn-danger" type="button" onclick="plusDivs(0)">Back</button> 
+                                <button type="button" class="btn btn-grey" id="next_username" name="next_username">Next</button>
+                            </div>
+                            <div class="alert" style="display: none">User không tồn tại. Mời nhập lại !!</div>
+                            
+                        </div>    
+                    </center>
+                </div>
+                <!-- End Nhap Username -->
+
+                <!-- Nhap Password -->
+                <div class="w3-display-container mySlides">
+                    <center>
+                        <div class="base">
+                            <div style="font-weight: bold; color:#47484a;font-size: 140%;margin-bottom: 1vh">Automatic Authentication <span style="color:  #cc0000">Gateway</span></div>
+                            <div class="cssload-container" style="display: table-cell;margin: auto">
+                                <div class="cssload-shaft1"></div>
+                                <div class="cssload-shaft2"></div>
+                                <div class="cssload-shaft3"></div>
+                                <div class="cssload-shaft4"></div>
+                                <div class="cssload-shaft5"></div>
+                                <div class="cssload-shaft6"></div>
+                                <div class="cssload-shaft7"></div>
+                                <div class="cssload-shaft8"></div>
+                                <div class="cssload-shaft9"></div>
+                                <div class="cssload-shaft10"></div>
+                                <div class="cssload-shaft11"></div>
+                                <div class="cssload-shaft12"></div>
+                                <div class="cssload-shaft13"></div>
+                                <div class="cssload-shaft14"></div>
+                                <div class="cssload-shaft15"></div>
+                                <div class="cssload-shaft16"></div>
+                                <div class="cssload-shaft17"></div>
+                                <div class="cssload-shaft18"></div>
+                                <div class="cssload-shaft19"></div>
+                                <div class="cssload-shaft20"></div>
+                            </div>
+                            <div id="tennguoidung" style="padding-top: 20px">
+                                <span class="title" id="say_hi"></span>
+                            </div>
+                            <div id="email" style="margin-bottom: 3vh"></div>
+                            <div id="form2">
+                                <div id="form-img1">
+                                    <div class="img_large" id="avatar" style="font-size: 40px;height: 75px;width: 75px;;margin-bottom: 2vh"></div>
+                                </div>
+                            </div><br>
+                                <div id="password">
+                                    <input placeholder="Enter your password" type="password" id="password_val" name="password" class="form-control">
+                                    <div id="result" style="margin-top: 5px;font-size: 13px;color: red;">&nbsp;</div>
+                                </div><br>
+                            <div>
+                                <button class="btn btn-danger" type="button" onclick="plusDivs(-1)">Back</button>
+                                <button type="button" class="btn btn-grey" id="sign_in" name="sign_in" value="123">Sign In</button>
+                            </div><br>
+                            
+                            <div id="quenmatkhau"><input id="forgot_password" name="forgot_password" type="button" value="Forgot password?" style="background-color: transparent;border: none;outline: none;text-decoration: underline;color: blue;"></div>
+                            <div id="forgot_password_notice" style="margin-top: 5px;font-size: 13px;color: green;">&nbsp;</div>
+                        </div>
+                    </center>
+                </div>
+                <!-- End Nhap Password -->
+                
+            </div>
+        </form>
+        <!-- Disables Forgot Pass -->
+        <script type="text/javascript">
+          $('#forgot_password').click(function(){
+              var button = $(this);
+              button.attr('disabled', 'disabled');
+              button.css("color","grey");
+              setTimeout(function() {
+                   button.removeAttr('disabled');
+                   button.css("color","blue");
+              },60000);
+          });
+        </script>
+        <!-- End Disables Forgot Pass -->
+        <!-- DA CO USER -->
+        <script type="text/javascript">
+            $(document).on("click","tr[id^='acc_']",function(){
+
+                $("#say_hi").html("Hi, "+$(this).attr("id").split("_")[1]);
+                $("#avatar").empty();
+                $("#avatar").append($(this).attr("class").split("_")[2]);
+                $("#avatar").css("background-color",$(this).attr("id").split("_")[2]);
+                $("#result").html('&nbsp;');
+                $("#forgot_password_notice").html('&nbsp;');
+
+            })
+            $(document).on("click",".ds_user",function(){
+                var values = $(this).find('td').map(function () {
+                    return $(this).text();
+                }).get();
+                var array = values[1].split(" ");
+                var lastEl = array[array.length-1];
+                var username = lastEl.split("@")[0]
+                $("#username").val(username);
+                $("#email").html(lastEl);
+            });
+        </script>
+
+
+        <!-- CHUA CO USER -->
+        <script type="text/javascript">
+            var list_user = [];
+            var list_name = [];
+            var list_mail = [];
+            var list_mail_name = [];
+
+            {% for i in ds_all_user %}
+              list_user.push("{{i[0]}}");
+              list_name.push("{{i[3]}}");
+              list_mail.push("{{i[2]}}");
+              list_mail_name.push("{{i[1]}}");
+            {% endfor %}
+            $(document).on("click","#next_username",function(){
+
+                var index = list_user.indexOf($('#username').val())
+                    if (index != -1) {
+                        var list_name_ava = list_mail_name[index].split(" ");
+                        $("#avatar").empty();
+                        $("#avatar").append(list_name_ava[list_name_ava.length-1][0]+list_name_ava[0][0])
+                        $("#say_hi").html('Hi, '+list_name[index]);
+                        $("#email").html(list_mail[index]);
+                        $("#result").html('&nbsp;');
+                        $("#forgot_password_notice").html('&nbsp;');
+                        plusDivs(1)
+                    }
+                    else {
+                      alert("Tên đăng nhập không tồn tại. Mời nhập lại !!")
+                    }
+
+            });
+        </script>
+        <script type="text/javascript">
+          $(document).keypress(function (e) {
+           var key = e.which;
+           if(key == 13){ 
+              if(slideIndex == 2){
+                $("#sign_in").click(); 
+                return false;               
+              }
+              else if(slideIndex == 1){
+                $("#next_username").click();
+                return false;
+              };
+            };
+          });  
+        </script>
+        <script>
+            var slideIndex = 1;
+            showDivs(slideIndex);   
+
+            function plusDivs(n) {
+                showDivs(slideIndex += n);
+            }
+
+            function showDivs(n) {
+                var i;
+                var x = document.getElementsByClassName("mySlides");
+                    if (n > x.length) {slideIndex = 1}    
+                    if (n < 1) {slideIndex = x.length}
+                    for (i = 0; i < x.length; i++) {
+                        x[i].style.display = "none";  
+                        }
+                    x[slideIndex-1].style.display = "block";  
+            }
+        </script>
+        <!-- CHECK Password -->
+        <script type=text/javascript>
+          $(function() {
+            $('#sign_in').bind('click', function() {
+              $.getJSON($SCRIPT_ROOT + '/authentication', {
+                username: $('#username').val(),
+                password: $('#password_val').val(),
+
+              }, function(data) {
+                  if (data.result == 'authenticated'){
+                    window.location.href = '/_station';
+                  }
+                  else{
+                    $("#password_val").val("");
+                    $("#result").text(data.result);
+                    $("#result").css("color","red");
+                    $("#forgot_password_notice").css("display","none");
+                  }
+                });
+                return false;
+            });
+          });
+        </script>
+        <!-- CHECK Password -->
+        <script type=text/javascript>
+          $(function() {
+            $('#forgot_password').bind('click', function() {
+              $("#password_val").val("");
+              $.getJSON($SCRIPT_ROOT + '/forgot_password', {
+                forgot_password: $('#username').val(),
+                
+              }, function(data) {
+                    $("#forgot_password_notice").css("display","");
+                    $("#forgot_password_notice").text(data.result);
+                    $("#forgot_password_notice").css("color","black");
+                    $("#result").html("&nbsp;");
+                });
+                return false;
+            });
+          });
+        </script>
+        <!-- Another Account -->
+        <script type="text/javascript">
+          $(document).ready(function(){
+            {% if ds_user_mac == [] %}
+              $("#another_account").click();
+            {% endif %}
+          });
+        </script>
+        <!-- End Another Account -->
+    </body>
+</html>

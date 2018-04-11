@@ -1,0 +1,22 @@
+$(function(){
+  $(".btn").on("click",function(){
+    $.notify({
+      title: '<strong>???</strong>',
+      icon: 'glyphicon glyphicon-star',
+      message: "????!"
+    },{
+      type: 'success',
+      animate: {
+		    enter: 'animated fadeInUp',
+        exit: 'animated fadeOutRight'
+      },
+      placement: {
+        from: "bottom",
+        align: "right"
+      },
+      offset: 20,
+      spacing: 10,
+      z_index: 1031,
+    });
+  });
+});

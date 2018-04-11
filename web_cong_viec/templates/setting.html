@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý thông tin cá nhân</title>
+     <link rel="stylesheet" type="text/css" href="/static/content/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="/static/content/site.css" />
+
+    <script src="/static/scripts/jquery-1.10.2.js"></script>
+    <script src="/static/scripts/bootstrap.js"></script>
+    
+    <script src="/static/scripts/respond.js"></script>
+</head>
+<style type="text/css">
+	.form-control {background-color: white !important;
+		color: #262626 !important;border:1px solid #cccccc;height: 30px !important;
+		border-radius: 0;width: 5vw
+	}
+	.title_lg{font-size: 3vh;color: #901e1d}
+	 .title_md{font-size: 2.3vh;color: #901e1d}
+	 .title_sm{font-size: 15px;color: black;font-weight: bold}
+	 .content_lg{font-size: 2.3vh;color: black}
+	 .content_sm{font-size: 15px;color: black;font-weight: normal;}
+	 .btn_edit_del_ok {
+		font-size: 14px;padding:0;outline: none;background-color: transparent;color: black;line-height: 2vh;padding: 1vh;font-weight: bold}
+	.btn_edit_del_ok:focus {outline:none;}
+	.btn_edit_del_ok:hover {color: #666666 !important}
+	
+</style>
+<body>
+{% set list_hour = ['07','08','09'] %}
+<form novalidate="novalidate" class="form-inline" method="POST" id="bang1" >
+	<div style="margin-left:10vw">
+		<div style="margin-bottom:1vh">
+			<label class="title_sm">Lựa chọn thời gian làm việc:</label>
+		</div>
+		<div>
+			Từ <span>
+					<select class="form-control" name="hour_begin" id="hour_begin">
+						{% for i in list_hour %}
+							<option value="{{i}}" {% if i == (time_begin|string)[:2] %} selected {% endif %}>{{i}}</option>
+						{% endfor %}
+					</select>
+				</span>
+		
+		    đến <span>
+		    		<select class="form-control" name="hour_finish" id="hour_finish">		    			
+						{% for i in range(16,22) %}
+							<option value="{{i}}" {% if i|string == (time_finish|string)[:2] %} selected {% endif %}>{{i}}</option>
+						{% endfor %}
+		    		</select>
+		    	</span>
+		    h 
+		</div>
+		<div style="margin-top:2vh">
+			<label class="title_sm">
+			Chọn khoảng thời gian báo cáo nhỏ nhất:
+			</label>
+			<span>
+				<select class="form-control" name="min_unit">
+					<option value="15" {% if min_unit == 15 %} selected {% endif %}>15p</option>
+					<option value="30" {% if min_unit == 30 %} selected {% endif %}>30p</option>
+				</select>
+			</span>
+		</div>
+		<div style="margin-top:2vh">
+			<button type="submit" id="submit_setting" class="btn_edit_del_ok" name="setting_1" value="123" onclick="return check_time_setting(this)">Submit</button>			
+			<button type="button" class="btn_edit_del_ok" onclick="intro()">Back</button>
+
+		</div>
+	</div>
+<script type="text/javascript">
+$('#submit_setting').on('click',function(){
+	alert('Chỉnh sửa thành công. Thay đổi có hiệu lực từ ngày mai. Xin mời đăng nhập lại để tiếp tục.')
+})
+	function intro(){
+		location.href = '/intro';
+	}
+	function check_time_setting(form){
+			var time_begin = parseInt(document.getElementById('hour_begin').value);
+			var time_finish = parseInt(document.getElementById('hour_finish').value);
+			if(time_begin >= time_finish) {
+		      alert("Chọn khoảng thời gian quá ngắn.");
+		      return false;
+		    }	
+		    return true;	      
+	}
+</script>
+</form>
+</body>
+</html>
